@@ -9,30 +9,24 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
-import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
+import com.jpmns.task.core.application.usecase.user.dto.input.GetUserByIdInputDTO;
+import com.jpmns.task.core.application.usecase.user.interfaces.GetUserByIdUseCase;
 
 @Component
 @NullMarked
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final GetUserByIdUseCase getUserByIdUseCase;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(GetUserByIdUseCase getUserByIdUseCase) {
+        this.getUserByIdUseCase = getUserByIdUseCase;
     }
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        var idResult = IdValueObject.of(userId);
+        var input = new GetUserByIdInputDTO(userId);
+        var model = getUserByIdUseCase.execute(input);
 
-        if (idResult.isFail()) {
-            throw new UsernameNotFoundException("User not found: " + userId);
-        }
-
-        var model = userRepository.findById(idResult.getValue())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userId));
-
-        return new User(model.getId().asString(), model.getPassword().asString(), Collections.emptyList());
+        return new User(model.id(), model.password(), Collections.emptyList());
     }
 }
