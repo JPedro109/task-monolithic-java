@@ -76,8 +76,10 @@ class UserEntityTest {
     @DisplayName("Should throw with two errors when both username and password are invalid")
     void shouldThrowWhenBothFieldsAreInvalid() {
         var id = UUID.randomUUID().toString();
+        var shortUsername = "ab";
+        String nullPassword = null;
 
-        assertThatThrownBy(() -> new UserEntity(id, "ab", null))
+        assertThatThrownBy(() -> new UserEntity(id, shortUsername, nullPassword))
                 .isInstanceOf(DomainException.class)
                 .satisfies(ex -> {
                     var errors = ((DomainException) ex).getErrors();
@@ -88,11 +90,11 @@ class UserEntityTest {
     @Test
     @DisplayName("Should throw when id is null")
     void shouldThrowWhenIdIsNull() {
-        String id = null;
+        String nullId = null;
         var username = "username";
         var password = "password";
 
-        assertThatThrownBy(() -> new UserEntity(id, username, password))
+        assertThatThrownBy(() -> new UserEntity(nullId, username, password))
                 .isInstanceOf(DomainException.class);
     }
 
@@ -125,9 +127,9 @@ class UserEntityTest {
     @DisplayName("Should throw when updating with a null username")
     void shouldThrowWhenUpdatingWithNullUsername() {
         var user = UserFixture.aUser();
-        String username = null;
+        String nullUsername = null;
 
-        assertThatThrownBy(() -> user.updateUsername(username))
+        assertThatThrownBy(() -> user.updateUsername(nullUsername))
                 .isInstanceOf(DomainException.class);
     }
 
@@ -135,9 +137,9 @@ class UserEntityTest {
     @DisplayName("Should throw when updating with a null password")
     void shouldThrowWhenUpdatingWithNullPassword() {
         var user = UserFixture.aUser();
-        String password = null;
+        String nullPassword = null;
 
-        assertThatThrownBy(() -> user.updatePassword(password))
+        assertThatThrownBy(() -> user.updatePassword(nullPassword))
                 .isInstanceOf(DomainException.class);
     }
 }

@@ -21,7 +21,6 @@ class TaskMapperTest {
         var taskId = task.getId();
         var taskName = task.getTaskName();
         var userId = task.getUserId();
-
         var model = TaskMapper.toModel(task);
 
         assertThat(model).isNotNull();
@@ -41,7 +40,6 @@ class TaskMapperTest {
         var taskFinished = task.getFinished();
         var user = UserFixture.aUser();
         var userId = user.getId();
-
         var model = new TaskJpaModel(
                 UUID.fromString(taskId.asString()),
                 UUID.fromString(userId.asString()),
@@ -69,7 +67,6 @@ class TaskMapperTest {
         var user = UserFixture.aUser();
         var userId = user.getId();
         var customName = "Custom task name";
-
         var model = new TaskJpaModel(
                 UUID.fromString(taskId.asString()),
                 UUID.fromString(userId.asString()),

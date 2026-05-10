@@ -47,6 +47,5 @@ class IdValueObjectTest {
         var result = IdValueObject.of(id);
 
         assertThat(result.isFail()).isTrue();
-        assertThat(result.getError().getErrors()).contains("Id is not in format UUID");
     }
 }

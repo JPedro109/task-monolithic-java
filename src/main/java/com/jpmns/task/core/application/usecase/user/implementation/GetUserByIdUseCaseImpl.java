@@ -21,15 +21,14 @@ public class GetUserByIdUseCaseImpl implements GetUserByIdUseCase {
 
     @Override
     public UserOutputDTO execute(GetUserByIdInputDTO input) {
-        var idResult = IdValueObject.of(input.id());
-        if (idResult.isFail()) {
-            throw idResult.getError();
+        var idValueOrError = IdValueObject.of(input.id());
+        if (idValueOrError.isFail()) {
+            throw idValueOrError.getError();
         }
 
-        var id = idResult.getValue();
+        var idValue = idValueOrError.getValue();
 
-        var user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        var user = userRepository.findById(idValue).orElseThrow(UserNotFoundException::new);
 
         return toOutput(user);
     }

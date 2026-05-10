@@ -7,7 +7,7 @@ import com.jpmns.task.core.domain.common.abstracts.Entity;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
 import com.jpmns.task.core.domain.task.valueobject.TaskNameValueObject;
 
-public class TaskEntity extends Entity {
+public class    TaskEntity extends Entity {
 
     private TaskNameValueObject taskName;
     private boolean finished;

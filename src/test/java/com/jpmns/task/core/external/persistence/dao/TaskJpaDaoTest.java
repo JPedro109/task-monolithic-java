@@ -124,11 +124,12 @@ class TaskJpaDaoTest {
     void shouldDeleteTaskById() {
         var task = TaskFixture.aTask();
         var model = buildTask(task, userId);
-        taskJpaDao.save(model);
 
+        taskJpaDao.save(model);
         taskJpaDao.deleteById(model.getId());
 
         var found = taskJpaDao.findById(model.getId());
+
         assertThat(found).isEmpty();
     }
 
@@ -137,6 +138,7 @@ class TaskJpaDaoTest {
     void shouldUpdateTaskNameWhenSavingExistingTask() {
         var task = TaskFixture.aTask();
         var model = buildTask(task, userId);
+
         taskJpaDao.save(model);
         model.setTaskName("Updated name");
 
@@ -152,6 +154,7 @@ class TaskJpaDaoTest {
     void shouldMarkTaskAsFinished() {
         var task = TaskFixture.aTask();
         var model = buildTask(task, userId);
+
         taskJpaDao.save(model);
         model.setFinished(true);
         taskJpaDao.save(model);

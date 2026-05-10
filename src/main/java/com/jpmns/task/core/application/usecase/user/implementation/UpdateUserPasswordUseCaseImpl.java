@@ -31,7 +31,8 @@ public class UpdateUserPasswordUseCaseImpl implements UpdateUserPasswordUseCase 
         var userIdValue = userIdValueOrError.getValue();
         var user = userRepository.findById(userIdValue).orElseThrow(UserNotFoundException::new);
 
-        if (!passwordEncoder.matches(input.currentPassword(), user.getPassword().asString())) {
+        var passwordIsValid = passwordEncoder.matches(input.currentPassword(), user.getPassword().asString());
+        if (!passwordIsValid) {
             throw new InvalidCredentialsException();
         }
 

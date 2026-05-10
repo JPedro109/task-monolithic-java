@@ -28,7 +28,6 @@ import com.jpmns.task.core.fixture.UserFixture;
 class UpdateUsernameUseCaseTest {
 
     private static final String NEW_USERNAME = "new_username";
-    private static final String INVALID_USER_ID = "not-a-valid-uuid";
 
     @Mock
     private UserRepository userRepository;
@@ -58,7 +57,8 @@ class UpdateUsernameUseCaseTest {
     @Test
     @DisplayName("Should throw when user ID is invalid")
     void shouldThrowWhenUserIdIsInvalid() {
-        var input = new UpdateUsernameInputDTO(INVALID_USER_ID, NEW_USERNAME);
+        var invalidUserId = "not-a-valid-uuid";
+        var input = new UpdateUsernameInputDTO(invalidUserId, NEW_USERNAME);
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(DomainException.class);

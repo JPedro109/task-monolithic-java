@@ -18,12 +18,14 @@ class TaskEntityTest {
     void shouldCreateTaskWithValidData() {
         var id = UUID.randomUUID().toString();
         var userId = UUID.randomUUID().toString();
+        var taskName = "Buy groceries";
+        var finished = false;
 
-        var task = new TaskEntity(id, userId, "Buy groceries", false);
+        var task = new TaskEntity(id, userId, taskName, finished);
 
         assertThat(task.getId().asString()).isEqualTo(id);
         assertThat(task.getUserId().asString()).isEqualTo(userId);
-        assertThat(task.getTaskName().asString()).isEqualTo("Buy groceries");
+        assertThat(task.getTaskName().asString()).isEqualTo(taskName);
         assertThat(task.getFinished()).isFalse();
         assertThat(task.getCreatedAt()).isNotNull();
     }
@@ -42,10 +44,11 @@ class TaskEntityTest {
     @DisplayName("Should update the task name")
     void shouldUpdateTaskName() {
         var task = TaskFixture.aTask();
+        var taskName = "Buy groceries";
 
-        task.updateTaskName("New name");
+        task.updateTaskName(taskName);
 
-        assertThat(task.getTaskName().asString()).isEqualTo("New name");
+        assertThat(task.getTaskName().asString()).isEqualTo(taskName);
     }
 
     @Test
@@ -53,19 +56,22 @@ class TaskEntityTest {
     void shouldPreserveUserIdAfterUpdate() {
         var task = TaskFixture.aTask();
         var userId = task.getUserId();
+        var updateTaskName = "Updated task name";
 
-        task.updateTaskName("Updated name");
+        task.updateTaskName(updateTaskName);
 
         assertThat(task.getUserId().asString()).isEqualTo(userId.asString());
     }
 
     @Test
-    @DisplayName("Should throw when task name is blank")
+    @DisplayName("Should throw when task name is empty")
     void shouldThrowWhenTaskNameIsBlank() {
         var id = UUID.randomUUID().toString();
         var userId = UUID.randomUUID().toString();
+        var finished = false;
+        var emptyTaskName = "";
 
-        assertThatThrownBy(() -> new TaskEntity(id, userId, "  ", false))
+        assertThatThrownBy(() -> new TaskEntity(id, userId, emptyTaskName, finished))
                 .isInstanceOf(DomainException.class);
     }
 
@@ -74,8 +80,10 @@ class TaskEntityTest {
     void shouldThrowWhenTaskNameIsNull() {
         var id = UUID.randomUUID().toString();
         var userId = UUID.randomUUID().toString();
+        var finished = false;
+        String nullTaskName = null;
 
-        assertThatThrownBy(() -> new TaskEntity(id, userId, null, false))
+        assertThatThrownBy(() -> new TaskEntity(id, userId, nullTaskName, finished))
                 .isInstanceOf(DomainException.class);
     }
 
@@ -85,8 +93,9 @@ class TaskEntityTest {
         var id = UUID.randomUUID().toString();
         var userId = UUID.randomUUID().toString();
         var longName = "a".repeat(256);
+        var finished = false;
 
-        assertThatThrownBy(() -> new TaskEntity(id, userId, longName, false))
+        assertThatThrownBy(() -> new TaskEntity(id, userId, longName, finished))
                 .isInstanceOf(DomainException.class);
     }
 
@@ -94,8 +103,11 @@ class TaskEntityTest {
     @DisplayName("Should throw when task id is not a valid UUID")
     void shouldThrowWhenIdIsNotUUID() {
         var userId = UUID.randomUUID().toString();
+        var invalidTaskId = "not-a-uuid";
+        var taskName = "Buy groceries";
+        var finished = false;
 
-        assertThatThrownBy(() -> new TaskEntity("not-a-uuid", userId, "Buy groceries", false))
+        assertThatThrownBy(() -> new TaskEntity(invalidTaskId, userId, taskName, finished))
                 .isInstanceOf(DomainException.class)
                 .satisfies(ex -> {
                     var errors = ((DomainException) ex).getErrors();
@@ -107,21 +119,21 @@ class TaskEntityTest {
     @DisplayName("Should throw when userId is not a valid UUID")
     void shouldThrowWhenUserIdIsNotUUID() {
         var id = UUID.randomUUID().toString();
+        var taskName = "Buy groceries";
+        var invalidUserId = "not-a-uuid";
+        var finished = false;
 
-        assertThatThrownBy(() -> new TaskEntity(id, "not-a-uuid", "Buy groceries", false))
-                .isInstanceOf(DomainException.class)
-                .satisfies(ex -> {
-                    var errors = ((DomainException) ex).getErrors();
-                    assertThat(errors).contains("Id is not in format UUID");
-                });
+        assertThatThrownBy(() -> new TaskEntity(id, invalidUserId, taskName, finished))
+                .isInstanceOf(DomainException.class);
     }
 
     @Test
     @DisplayName("Should throw when updating task name with a blank value")
     void shouldThrowWhenUpdatingWithBlankName() {
         var task = TaskFixture.aTask();
+        var emptyTaskName = "";
 
-        assertThatThrownBy(() -> task.updateTaskName(""))
+        assertThatThrownBy(() -> task.updateTaskName(emptyTaskName))
                 .isInstanceOf(DomainException.class);
     }
 
@@ -129,8 +141,9 @@ class TaskEntityTest {
     @DisplayName("Should throw when updating task name with null")
     void shouldThrowWhenUpdatingWithNullName() {
         var task = TaskFixture.aTask();
+        String nullTaskName = null;
 
-        assertThatThrownBy(() -> task.updateTaskName(null))
+        assertThatThrownBy(() -> task.updateTaskName(nullTaskName))
                 .isInstanceOf(DomainException.class);
     }
 

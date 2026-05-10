@@ -66,10 +66,12 @@ class UserLoginUseCaseTest {
     @Test
     @DisplayName("Should throw when user is not found")
     void shouldThrowWhenUserNotFound() {
-        var username = UsernameValueObject.of("unknown").getValue();
+        var unknownUser = "unknown";
+        var password = "password";
+        var username = UsernameValueObject.of(unknownUser).getValue();
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> useCase.execute(new UserLoginInputDTO(username.asString(), "pass")))
+        assertThatThrownBy(() -> useCase.execute(new UserLoginInputDTO(username.asString(), password)))
                 .isInstanceOf(InvalidCredentialsException.class);
 
         verify(tokenProvider, never()).generateAccessToken(any());

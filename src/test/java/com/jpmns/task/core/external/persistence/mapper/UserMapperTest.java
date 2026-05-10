@@ -20,7 +20,6 @@ class UserMapperTest {
         var userId = user.getId();
         var username = user.getUsername();
         var password = user.getPassword();
-
         var model = UserMapper.toModel(user);
 
         assertThat(model).isNotNull();
@@ -37,7 +36,6 @@ class UserMapperTest {
         var userId = user.getId();
         var username = user.getUsername();
         var password = user.getPassword();
-
         var model = new UserJpaModel(
                 UUID.fromString(userId.asString()),
                 username.asString(),
@@ -61,7 +59,6 @@ class UserMapperTest {
         var userId = user.getId();
         var password = user.getPassword();
         var customUsername = "custom_user";
-
         var model = new UserJpaModel(
                 UUID.fromString(userId.asString()),
                 customUsername,
@@ -81,8 +78,7 @@ class UserMapperTest {
         var user = UserFixture.aUser();
         var userId = user.getId();
         var username = user.getUsername();
-        var encodedPassword = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
-
+        var encodedPassword = "encoded-password";
         var model = new UserJpaModel(
                 UUID.fromString(userId.asString()),
                 username.asString(),

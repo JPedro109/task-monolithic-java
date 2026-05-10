@@ -1,7 +1,7 @@
 package com.jpmns.task.core.application.usecase.user;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -29,7 +29,6 @@ import com.jpmns.task.core.fixture.UserFixture;
 class UpdateUserPasswordUseCaseTest {
 
     private static final String NEW_PASSWORD = "new_password";
-    private static final String INVALID_USER_ID = "not-a-valid-uuid";
 
     @Mock
     private UserRepository userRepository;
@@ -63,7 +62,9 @@ class UpdateUserPasswordUseCaseTest {
     @Test
     @DisplayName("Should throw when user ID is invalid")
     void shouldThrowWhenUserIdIsInvalid() {
-        var input = new UpdateUserPasswordInputDTO(INVALID_USER_ID, "current", NEW_PASSWORD);
+        var invalidUserId = "not-a-valid-uuid";
+        var currentPassword = "current";
+        var input = new UpdateUserPasswordInputDTO(invalidUserId, currentPassword, NEW_PASSWORD);
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(DomainException.class);
@@ -77,7 +78,8 @@ class UpdateUserPasswordUseCaseTest {
     void shouldThrowWhenUserNotFound() {
         var user = UserFixture.aUser();
         var userId = user.getId();
-        var input = new UpdateUserPasswordInputDTO(userId.asString(), "current", NEW_PASSWORD);
+        var currentPassword = "current";
+        var input = new UpdateUserPasswordInputDTO(userId.asString(), currentPassword, NEW_PASSWORD);
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 

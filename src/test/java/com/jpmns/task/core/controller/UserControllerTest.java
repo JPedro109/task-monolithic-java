@@ -73,11 +73,12 @@ class UserControllerTest {
             var user = UserFixture.aUser();
             var userId = user.getId();
             var username = user.getUsername();
+            var password = user.getPassword();
             var output = new CreateUserOutputDTO(userId.asString(), username.asString());
 
             when(createUserUseCase.execute(any())).thenReturn(output);
 
-            perform("username", "password")
+            perform(username.asString(), password.asString())
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(userId.asString()))
                     .andExpect(jsonPath("$.username").value(username.asString()));
@@ -87,12 +88,12 @@ class UserControllerTest {
         @DisplayName("Should return 409 when username already exists")
         void shouldReturn409WhenUsernameAlreadyExists() throws Exception {
             var user = UserFixture.aUser();
-            var userId = user.getId();
+            var username = user.getUsername();
             var password = user.getPassword();
 
             when(createUserUseCase.execute(any())).thenThrow(new UsernameAlreadyExistsException());
 
-            perform(userId.asString(), password.asString())
+            perform(username.asString(), password.asString())
                     .andExpect(status().isConflict());
         }
 
@@ -101,8 +102,9 @@ class UserControllerTest {
         void shouldReturn400WhenUsernameIsBlank() throws Exception {
             var user = UserFixture.aUser();
             var password = user.getPassword();
+            var emptyUsername = "";
 
-            perform("", password.asString())
+            perform(emptyUsername, password.asString())
                     .andExpect(status().isBadRequest());
         }
 
@@ -111,8 +113,9 @@ class UserControllerTest {
         void shouldReturn400WhenUsernameIsTooShort() throws Exception {
             var user = UserFixture.aUser();
             var password = user.getPassword();
+            var shortUsername = "ab";
 
-            perform("ab", password.asString())
+            perform(shortUsername, password.asString())
                     .andExpect(status().isBadRequest());
         }
 
@@ -121,8 +124,9 @@ class UserControllerTest {
         void shouldReturn400WhenPasswordIsTooShort() throws Exception {
             var user = UserFixture.aUser();
             var username = user.getUsername();
+            var shortPassword = "ab";
 
-            perform(username.asString(), "short")
+            perform(username.asString(), shortPassword)
                     .andExpect(status().isBadRequest());
         }
 
@@ -181,18 +185,24 @@ class UserControllerTest {
         @DisplayName("Should return 204 when password is updated successfully")
         @WithJwtTokenMock
         void shouldReturn204WhenPasswordIsUpdatedSuccessfully() throws Exception {
+            var oldPassword = "old-password";
+            var newPassword = "new-password";
+
             doNothing().when(updateUserPasswordUseCase).execute(any());
 
-            perform("oldPass123", "newPass456")
+            perform(oldPassword, newPassword)
                     .andExpect(status().isNoContent());
         }
 
         @Test
         @DisplayName("Should return 401 when current password is wrong")
         void shouldReturn401WhenCurrentPasswordIsWrong() throws Exception {
+            var wrongOldPassword = "wrong-pass";
+            var newPassword = "new-password";
+
             doThrow(new InvalidCredentialsException()).when(updateUserPasswordUseCase).execute(any());
 
-            perform("wrongPass", "newPass456")
+            perform(wrongOldPassword, newPassword)
                     .andExpect(status().isUnauthorized());
         }
 
@@ -200,14 +210,20 @@ class UserControllerTest {
         @DisplayName("Should return 400 when new password is shorter than 8 characters")
         @WithJwtTokenMock
         void shouldReturn400WhenNewPasswordIsTooShort() throws Exception {
-            perform("oldPass123", "short")
+            var oldPassword = "old-password";
+            var newPassword = "ab";
+
+            perform(oldPassword, newPassword)
                     .andExpect(status().isBadRequest());
         }
 
         @Test
         @DisplayName("Should return 401 when request has no token")
         void shouldReturn401WhenRequestHasNoToken() throws Exception {
-            perform("oldPass123", "newPass456")
+            var oldPassword = "old-password";
+            var newPassword = "new-password";
+
+            perform(oldPassword, newPassword)
                     .andExpect(status().isUnauthorized());
         }
 
@@ -232,23 +248,27 @@ class UserControllerTest {
         void shouldReturn200WhenUsernameIsUpdatedSuccessfully() throws Exception {
             var user = UserFixture.aUser();
             var userId = user.getId();
-            var output = new UpdateUsernameOutputDTO(userId.asString(), "new_john");
+            var username = user.getUsername();
+            var output = new UpdateUsernameOutputDTO(userId.asString(), username.asString());
 
             when(updateUsernameUseCase.execute(any())).thenReturn(output);
 
-            perform("new_john")
+            perform(username.asString())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(userId.asString()))
-                    .andExpect(jsonPath("$.username").value("new_john"));
+                    .andExpect(jsonPath("$.username").value(username.asString()));
         }
 
         @Test
         @DisplayName("Should return 409 when new username already exists")
         @WithJwtTokenMock
         void shouldReturn409WhenNewUsernameAlreadyExists() throws Exception {
+            var user = UserFixture.aUser();
+            var username = user.getUsername();
+
             when(updateUsernameUseCase.execute(any())).thenThrow(new UsernameAlreadyExistsException());
 
-            perform("existing_user")
+            perform(username.asString())
                     .andExpect(status().isConflict());
         }
 
@@ -256,14 +276,19 @@ class UserControllerTest {
         @DisplayName("Should return 400 when new username is shorter than 3 characters")
         @WithJwtTokenMock
         void shouldReturn400WhenNewUsernameIsTooShort() throws Exception {
-            perform("ab")
+            var shortNewUsername = "ab";
+
+            perform(shortNewUsername)
                     .andExpect(status().isBadRequest());
         }
 
         @Test
         @DisplayName("Should return 401 when request has no token")
         void shouldReturn401WhenRequestHasNoToken() throws Exception {
-            perform("new_john")
+            var user = UserFixture.aUser();
+            var username = user.getUsername();
+
+            perform(username.asString())
                     .andExpect(status().isUnauthorized());
         }
 
@@ -271,9 +296,12 @@ class UserControllerTest {
         @DisplayName("Should return 404 when user is not found")
         @WithJwtTokenMock
         void shouldReturn404WhenUserIsNotFound() throws Exception {
+            var user = UserFixture.aUser();
+            var username = user.getUsername();
+
             when(updateUsernameUseCase.execute(any())).thenThrow(new UserNotFoundException());
 
-            perform("new_john")
+            perform(username.asString())
                     .andExpect(status().isNotFound());
         }
 

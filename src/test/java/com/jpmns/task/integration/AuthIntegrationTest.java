@@ -30,7 +30,10 @@ class AuthIntegrationTest extends IntegrationTestBase {
         @DisplayName("Should return 200 with access and refresh tokens when credentials are valid")
         @SqlCreateSeed
         void shouldReturn200WhenCredentialsAreValid() throws Exception {
-            perform("john", "password")
+            var username = "john";
+            var password = "password";
+
+            perform(username, password)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").isNotEmpty())
                     .andExpect(jsonPath("$.refreshToken").isNotEmpty());
@@ -39,28 +42,40 @@ class AuthIntegrationTest extends IntegrationTestBase {
         @Test
         @DisplayName("Should return 401 when password is wrong")
         void shouldReturn401WhenPasswordIsWrong() throws Exception {
-            perform("wrongusername", "wrongpassword")
+            var wrongUsername = "wrongusername";
+            var wrongPassword = "wrong-password";
+
+            perform(wrongUsername, wrongPassword)
                     .andExpect(status().isUnauthorized());
         }
 
         @Test
         @DisplayName("Should return 401 when user does not exist")
         void shouldReturn401WhenUserDoesNotExist() throws Exception {
-            perform("nonexistentuser", "password")
+            var nonExistenceUsername = "nonexistenceuser";
+            var password = "password";
+
+            perform(nonExistenceUsername, password)
                     .andExpect(status().isUnauthorized());
         }
 
         @Test
         @DisplayName("Should return 400 when username is blank")
         void shouldReturn400WhenUsernameIsBlank() throws Exception {
-            perform("", "password123")
+            var emptyUsername = "";
+            var password = "password";
+
+            perform(emptyUsername, password)
                     .andExpect(status().isBadRequest());
         }
 
         @Test
         @DisplayName("Should return 400 when password is blank")
         void shouldReturn400WhenPasswordIsBlank() throws Exception {
-            perform("john", "")
+            var username = "john";
+            var emptyPassword = "";
+
+            perform(username, emptyPassword)
                     .andExpect(status().isBadRequest());
         }
 
@@ -102,14 +117,18 @@ class AuthIntegrationTest extends IntegrationTestBase {
         @Test
         @DisplayName("Should return 401 when refresh token is invalid")
         void shouldReturn401WhenRefreshTokenIsInvalid() throws Exception {
-            perform("invalidrefreshtoken")
+            var invalidToken = "invalid-token";
+
+            perform(invalidToken)
                     .andExpect(status().isUnauthorized());
         }
 
         @Test
         @DisplayName("Should return 400 when refresh token is blank")
         void shouldReturn400WhenRefreshTokenIsBlank() throws Exception {
-            perform("")
+            var emptyToken = "";
+
+            perform(emptyToken)
                     .andExpect(status().isBadRequest());
         }
 

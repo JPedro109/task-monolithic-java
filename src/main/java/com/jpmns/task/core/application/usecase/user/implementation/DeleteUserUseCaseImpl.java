@@ -26,9 +26,7 @@ public class DeleteUserUseCaseImpl implements DeleteUserUseCase {
 
         var userIdValue = userIdValueOrError.getValue();
 
-        if (userRepository.findById(userIdValue).isEmpty()) {
-            throw new UserNotFoundException();
-        }
+        userRepository.findById(userIdValue).orElseThrow(UserNotFoundException::new);
 
         userRepository.deleteById(userIdValue);
     }

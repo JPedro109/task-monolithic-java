@@ -98,23 +98,27 @@ class TaskControllerTest {
             var task = TaskFixture.aTask();
             var taskId = task.getId();
             var taskName = task.getTaskName();
+            var taskFinished = task.getFinished();
             var userId = task.getUserId();
             var output = buildTaskOutput(task);
 
             when(createTaskUseCase.execute(any())).thenReturn(output);
 
-            perform("Buy groceries")
+            perform(taskName.asString())
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(taskId.asString()))
                     .andExpect(jsonPath("$.userId").value(userId.asString()))
                     .andExpect(jsonPath("$.taskName").value(taskName.asString()))
-                    .andExpect(jsonPath("$.finished").value(false));
+                    .andExpect(jsonPath("$.finished").value(taskFinished));
         }
 
         @Test
         @DisplayName("Should return 401 when request has no token")
         void shouldReturn401WhenRequestHasNoToken() throws Exception {
-            perform("Buy groceries")
+            var task = TaskFixture.aTask();
+            var taskName = task.getTaskName();
+
+            perform(taskName.asString())
                     .andExpect(status().isUnauthorized());
         }
 
@@ -122,7 +126,9 @@ class TaskControllerTest {
         @DisplayName("Should return 400 when task name is blank")
         @WithJwtTokenMock
         void shouldReturn400WhenTaskNameIsBlank() throws Exception {
-            perform("")
+            var emptyTaskName = "";
+
+            perform(emptyTaskName)
                     .andExpect(status().isBadRequest());
         }
 
@@ -130,7 +136,9 @@ class TaskControllerTest {
         @DisplayName("Should return 400 when task name exceeds 255 characters")
         @WithJwtTokenMock
         void shouldReturn400WhenTaskNameExceedsMaxLength() throws Exception {
-            perform("a".repeat(256))
+            var largeTaskName = "a".repeat(256);
+
+            perform(largeTaskName)
                     .andExpect(status().isBadRequest());
         }
 
@@ -202,29 +210,34 @@ class TaskControllerTest {
             var taskId = task.getId();
             var taskFinished = task.getFinished();
             var userId = task.getUserId();
+            var updatedTaskName = "Updated task name";
             var output = new TaskOutputDTO(
                     taskId.asString(),
                     userId.asString(),
-                    "Updated task name",
+                    updatedTaskName,
                     taskFinished,
                     Instant.now()
             );
 
             when(updateTaskUseCase.execute(any())).thenReturn(output);
 
-            perform(taskId.asString(), "Updated task name")
+            perform(taskId.asString(), updatedTaskName)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(taskId.asString()))
-                    .andExpect(jsonPath("$.taskName").value("Updated task name"));
+                    .andExpect(jsonPath("$.taskName").value(updatedTaskName));
         }
 
         @Test
         @DisplayName("Should return 404 when task is not found")
         @WithJwtTokenMock
         void shouldReturn404WhenTaskIsNotFound() throws Exception {
+            var task = TaskFixture.aTask();
+            var taskId = task.getId();
+            var updatedTaskName = "Updated task name";
+
             when(updateTaskUseCase.execute(any())).thenThrow(new TaskNotFoundException());
 
-            perform(UUID.randomUUID().toString(), "Updated task name")
+            perform(taskId.asString(), updatedTaskName)
                     .andExpect(status().isNotFound());
         }
 
@@ -234,10 +247,11 @@ class TaskControllerTest {
         void shouldReturn403WhenUserDoesNotOwnTheTask() throws Exception {
             var task = TaskFixture.aTask();
             var taskId = task.getId();
+            var updatedTaskName = "Updated task name";
 
             when(updateTaskUseCase.execute(any())).thenThrow(new TaskAccessDeniedException());
 
-            perform(taskId.asString(), "Updated task name")
+            perform(taskId.asString(), updatedTaskName)
                     .andExpect(status().isForbidden());
         }
 
@@ -247,8 +261,9 @@ class TaskControllerTest {
         void shouldReturn400WhenTaskNameIsBlank() throws Exception {
             var task = TaskFixture.aTask();
             var taskId = task.getId();
+            var emptyTaskName = "";
 
-            perform(taskId.asString(), "")
+            perform(taskId.asString(), emptyTaskName)
                     .andExpect(status().isBadRequest());
         }
 
@@ -257,8 +272,9 @@ class TaskControllerTest {
         void shouldReturn401WhenRequestHasNoToken() throws Exception {
             var task = TaskFixture.aTask();
             var taskId = task.getId();
+            var updatedTaskName = "Updated task name";
 
-            perform(taskId.asString(), "Updated task name")
+            perform(taskId.asString(), updatedTaskName)
                     .andExpect(status().isUnauthorized());
         }
 
@@ -349,9 +365,12 @@ class TaskControllerTest {
         @DisplayName("Should return 404 when task is not found")
         @WithJwtTokenMock
         void shouldReturn404WhenTaskIsNotFound() throws Exception {
+            var task = TaskFixture.aTask();
+            var taskId = task.getId();
+
             doThrow(new TaskNotFoundException()).when(markTaskAsFinishedUseCase).execute(any());
 
-            perform(UUID.randomUUID().toString())
+            perform(taskId.asString())
                     .andExpect(status().isNotFound());
         }
 

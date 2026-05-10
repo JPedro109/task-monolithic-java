@@ -30,7 +30,8 @@ public class UpdateTaskUseCaseImpl implements UpdateTaskUseCase {
         var taskIdValue = taskIdValueOrError.getValue();
         var task = taskRepository.findById(taskIdValue).orElseThrow(TaskNotFoundException::new);
 
-        if (!task.getUserId().asString().equals(input.userId())) {
+        var userIsOwnerTask = task.getUserId().asString().equals(input.userId());
+        if (!userIsOwnerTask) {
             throw new TaskAccessDeniedException();
         }
 

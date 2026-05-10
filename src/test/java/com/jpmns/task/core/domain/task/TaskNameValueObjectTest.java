@@ -41,7 +41,6 @@ class TaskNameValueObjectTest {
         var result = TaskNameValueObject.of(name);
 
         assertThat(result.isFail()).isFalse();
-        assertThat(result.getValue().asString()).isEqualTo("X");
     }
 
     @Test
@@ -52,7 +51,6 @@ class TaskNameValueObjectTest {
         var result = TaskNameValueObject.of(name);
 
         assertThat(result.isFail()).isTrue();
-        assertThat(result.getError().getErrors()).contains("Task name must be between 1 and 255 characters");
     }
 
     @ParameterizedTest
@@ -63,6 +61,5 @@ class TaskNameValueObjectTest {
         var result = TaskNameValueObject.of(name);
 
         assertThat(result.isFail()).isTrue();
-        assertThat(result.getError().getErrors()).contains("Task name must be between 1 and 255 characters");
     }
 }

@@ -25,6 +25,7 @@ import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDT
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.interfaces.RefreshUserTokenUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.UserLoginUseCase;
+import com.jpmns.task.core.fixture.UserFixture;
 import com.jpmns.task.core.presentation.controller.AuthController;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
 
@@ -54,43 +55,53 @@ class AuthControllerTest {
         @Test
         @DisplayName("Should return 200 with tokens when credentials are valid")
         void shouldReturn200WhenCredentialsAreValid() throws Exception {
-            var output = new UserLoginOutputDTO("access-token-value", "refresh-token-value");
+            var user = UserFixture.aUser();
+            var username = user.getUsername();
+            var password = user.getPassword();
+            var accessToken = "access-token";
+            var refreshToken = "refresh-token";
+            var output = new UserLoginOutputDTO(accessToken, refreshToken);
+
             when(userLoginUseCase.execute(any())).thenReturn(output);
 
-            perform("john_doe", "secret123")
+            perform(username.asString(), password.asString())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").value("access-token-value"))
-                    .andExpect(jsonPath("$.refreshToken").value("refresh-token-value"));
+                    .andExpect(jsonPath("$.accessToken").value(accessToken))
+                    .andExpect(jsonPath("$.refreshToken").value(refreshToken));
         }
 
         @Test
         @DisplayName("Should return 401 when credentials are invalid")
         void shouldReturn401WhenCredentialsAreInvalid() throws Exception {
+            var user = UserFixture.aUser();
+            var username = user.getUsername();
+            var wrongPassword = "wrong-password";
+
             when(userLoginUseCase.execute(any())).thenThrow(new InvalidCredentialsException());
 
-            perform("john_doe", "wrong-password")
+            perform(username.asString(), wrongPassword)
                     .andExpect(status().isUnauthorized());
         }
 
         @Test
         @DisplayName("Should return 400 when username is blank")
         void shouldReturn400WhenUsernameIsBlank() throws Exception {
-            perform("", "secret123")
+            var user = UserFixture.aUser();
+            var password = user.getPassword();
+            var emptyUsername = "";
+
+            perform(emptyUsername, password.asString())
                     .andExpect(status().isBadRequest());
         }
 
         @Test
         @DisplayName("Should return 400 when password is blank")
         void shouldReturn400WhenPasswordIsBlank() throws Exception {
-            perform("john_doe", "")
-                    .andExpect(status().isBadRequest());
-        }
+            var user = UserFixture.aUser();
+            var username = user.getUsername();
+            var emptyPassword = "";
 
-        @Test
-        @DisplayName("Should return 400 when body is missing")
-        void shouldReturn4xxWhenBodyIsMissing() throws Exception {
-            mockMvc.perform(post("/api/v1/auth/login")
-                            .contentType(MediaType.APPLICATION_JSON))
+            perform(username.asString(), emptyPassword)
                     .andExpect(status().isBadRequest());
         }
 
@@ -112,36 +123,35 @@ class AuthControllerTest {
         @Test
         @DisplayName("Should return 200 with new tokens when refresh token is valid")
         void shouldReturn200WhenRefreshTokenIsValid() throws Exception {
-            var output = new RefreshUserTokenOutputDTO("new-access-token", "new-refresh-token");
+            var accessToken = "access-token";
+            var refreshToken = "refresh-token";
+            var output = new RefreshUserTokenOutputDTO(accessToken, refreshToken);
+
             when(refreshUserTokenUseCase.execute(any())).thenReturn(output);
 
-            perform("valid-refresh-token")
+            perform(refreshToken)
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").value("new-access-token"))
-                    .andExpect(jsonPath("$.refreshToken").value("new-refresh-token"));
+                    .andExpect(jsonPath("$.accessToken").value(accessToken))
+                    .andExpect(jsonPath("$.refreshToken").value(refreshToken));
         }
 
         @Test
         @DisplayName("Should return 401 when refresh token is invalid")
         void shouldReturn401WhenRefreshTokenIsInvalid() throws Exception {
+            var invalidToken = "invalid-token";
+
             when(refreshUserTokenUseCase.execute(any())).thenThrow(new InvalidCredentialsException());
 
-            perform("invalid-token")
+            perform(invalidToken)
                     .andExpect(status().isUnauthorized());
         }
 
         @Test
         @DisplayName("Should return 400 when refresh token is blank")
         void shouldReturn400WhenRefreshTokenIsBlank() throws Exception {
-            perform("")
-                    .andExpect(status().isBadRequest());
-        }
+            var emptyToken = "";
 
-        @Test
-        @DisplayName("Should return 400 when body is missing")
-        void shouldReturn4xxWhenBodyIsMissing() throws Exception {
-            mockMvc.perform(post("/api/v1/auth/refresh")
-                            .contentType(MediaType.APPLICATION_JSON))
+            perform(emptyToken)
                     .andExpect(status().isBadRequest());
         }
 

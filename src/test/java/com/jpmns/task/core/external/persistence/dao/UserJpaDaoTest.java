@@ -87,6 +87,7 @@ class UserJpaDaoTest {
     void shouldFindUserByUsername() {
         var user = UserFixture.aUser();
         var model = buildUser(user);
+
         userJpaDao.save(model);
 
         var found = userJpaDao.findByUsername(model.getUsername());
@@ -98,7 +99,9 @@ class UserJpaDaoTest {
     @Test
     @DisplayName("Should return empty Optional when username does not exist")
     void shouldReturnEmptyWhenUsernameNotFound() {
-        var found = userJpaDao.findByUsername("nonexistent");
+        var nonExistsUsername = "non-existent-username";
+
+        var found = userJpaDao.findByUsername(nonExistsUsername);
 
         assertThat(found).isEmpty();
     }
@@ -108,6 +111,7 @@ class UserJpaDaoTest {
     void shouldReturnTrueWhenUsernameExists() {
         var user = UserFixture.aUser();
         var model = buildUser(user);
+
         userJpaDao.save(model);
 
         var exists = userJpaDao.existsByUsername(model.getUsername());
@@ -118,7 +122,9 @@ class UserJpaDaoTest {
     @Test
     @DisplayName("Should return false when username does not exist")
     void shouldReturnFalseWhenUsernameDoesNotExist() {
-        var exists = userJpaDao.existsByUsername("ghost");
+        var nonExistsUsername = "non-existent-username";
+
+        var exists = userJpaDao.existsByUsername(nonExistsUsername);
 
         assertThat(exists).isFalse();
     }
@@ -128,6 +134,7 @@ class UserJpaDaoTest {
     void shouldDeleteUserById() {
         var user = UserFixture.aUser();
         var model = buildUser(user);
+
         userJpaDao.save(model);
         userJpaDao.deleteById(model.getId());
 
@@ -141,12 +148,13 @@ class UserJpaDaoTest {
     void shouldUpdateUsernameWhenSavingExistingUser() {
         var user = UserFixture.aUser();
         var model = buildUser(user);
+
         userJpaDao.save(model);
         model.setUsername("updated_username");
-
         userJpaDao.save(model);
 
         var found = userJpaDao.findById(model.getId());
+
         assertThat(found).isPresent();
         assertThat(found.get().getUsername()).isEqualTo(model.getUsername());
     }

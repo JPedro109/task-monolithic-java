@@ -2,6 +2,7 @@ package com.jpmns.task.core.application.usecase.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,9 +28,6 @@ import com.jpmns.task.core.fixture.UserFixture;
 class RefreshUserTokenUseCaseTest {
 
     private static final String REFRESH_TOKEN = "refresh-token";
-    private static final String NEW_ACCESS_TOKEN = "new-access-token";
-    private static final String NEW_REFRESH_TOKEN = "new-refresh-token";
-    private static final String INVALID_USER_ID = "not-a-valid-uuid";
 
     @Mock
     private Token token;
@@ -43,19 +41,21 @@ class RefreshUserTokenUseCaseTest {
     @Test
     @DisplayName("Should refresh tokens successfully when refresh token is valid")
     void shouldRefreshTokensSuccessfully() {
+        var newAccessToken = "new-access-token";
+        var newRefreshToken = "new-refresh-token";
         var user = UserFixture.aUser();
         var userId = user.getId();
         var input = new RefreshUserTokenInputDTO(REFRESH_TOKEN);
 
         when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(userId.asString()));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(token.generateAccessToken(userId.asString())).thenReturn(NEW_ACCESS_TOKEN);
-        when(token.generateRefreshToken(userId.asString())).thenReturn(NEW_REFRESH_TOKEN);
+        when(token.generateAccessToken(userId.asString())).thenReturn(newAccessToken);
+        when(token.generateRefreshToken(userId.asString())).thenReturn(newRefreshToken);
 
         var output = useCase.execute(input);
 
-        assertThat(output.accessToken()).isEqualTo(NEW_ACCESS_TOKEN);
-        assertThat(output.refreshToken()).isEqualTo(NEW_REFRESH_TOKEN);
+        assertThat(output.accessToken()).isEqualTo(newAccessToken);
+        assertThat(output.refreshToken()).isEqualTo(newRefreshToken);
         verify(token).generateAccessToken(userId.asString());
         verify(token).generateRefreshToken(userId.asString());
     }
@@ -63,15 +63,16 @@ class RefreshUserTokenUseCaseTest {
     @Test
     @DisplayName("Should throw when token subject is not a valid user ID")
     void shouldThrowWhenTokenSubjectIsInvalidUserId() {
+        var invalidUserId = "not-a-valid-uuid";
         var input = new RefreshUserTokenInputDTO(REFRESH_TOKEN);
 
-        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(INVALID_USER_ID));
+        when(token.tokenValidation(REFRESH_TOKEN)).thenReturn(new DecodeTokenDto(invalidUserId));
 
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(UserNotFoundException.class);
 
-        verify(userRepository, never()).findById(org.mockito.ArgumentMatchers.any());
-        verify(token, never()).generateAccessToken(org.mockito.ArgumentMatchers.any());
+        verify(userRepository, never()).findById(any());
+        verify(token, never()).generateAccessToken(any());
     }
 
     @Test
@@ -87,7 +88,7 @@ class RefreshUserTokenUseCaseTest {
         assertThatThrownBy(() -> useCase.execute(input))
                 .isInstanceOf(UserNotFoundException.class);
 
-        verify(token, never()).generateAccessToken(org.mockito.ArgumentMatchers.any());
-        verify(token, never()).generateRefreshToken(org.mockito.ArgumentMatchers.any());
+        verify(token, never()).generateAccessToken(any());
+        verify(token, never()).generateRefreshToken(any());
     }
 }

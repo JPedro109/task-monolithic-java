@@ -184,7 +184,7 @@ class UserIntegrationTest extends IntegrationTestBase {
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn204WhenCurrentPasswordIsCorrect() throws Exception {
-            var newPassword = "newpassword";
+            var newPassword = "new-password";
 
             perform(PASSWORD, newPassword)
                     .andExpect(status().isNoContent());
@@ -195,8 +195,8 @@ class UserIntegrationTest extends IntegrationTestBase {
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn401WhenCurrentPasswordIsWrong() throws Exception {
-            var currentPassword = "wrongpassword";
-            var newPassword = "newpassword";
+            var currentPassword = "wrong-password";
+            var newPassword = "new-password";
 
             perform(currentPassword, newPassword)
                     .andExpect(status().isUnauthorized());
@@ -216,7 +216,7 @@ class UserIntegrationTest extends IntegrationTestBase {
         @Test
         @DisplayName("Should return 401 when no token is provided")
         void shouldReturn401WhenNoToken() throws Exception {
-            var newPassword = "newpassword";
+            var newPassword = "new-password";
 
             perform(PASSWORD, newPassword)
                     .andExpect(status().isUnauthorized());

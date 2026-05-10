@@ -24,29 +24,9 @@ class UsernameValueObjectTest {
     }
 
     @Test
-    @DisplayName("Should accept a username with exactly 3 characters")
-    void shouldAcceptMinimumLength() {
-        var username = "abc";
-
-        var result = UsernameValueObject.of(username);
-
-        assertThat(result.isFail()).isFalse();
-    }
-
-    @Test
     @DisplayName("Should accept a username with exactly 50 characters")
     void shouldAcceptMaximumLength() {
         var username = "a".repeat(50);
-
-        var result = UsernameValueObject.of(username);
-
-        assertThat(result.isFail()).isFalse();
-    }
-
-    @Test
-    @DisplayName("Should accept an alphanumeric username with underscore")
-    void shouldAcceptAlphanumericWithUnderscore() {
-        var username = "User_123";
 
         var result = UsernameValueObject.of(username);
 

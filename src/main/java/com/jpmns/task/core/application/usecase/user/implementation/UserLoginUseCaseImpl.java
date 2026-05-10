@@ -35,10 +35,10 @@ public class UserLoginUseCaseImpl implements UserLoginUseCase {
 
         var usernameValue = usernameValueOrError.getValue();
 
-        var user = userRepository.findByUsername(usernameValue)
-                .orElseThrow(InvalidCredentialsException::new);
+        var user = userRepository.findByUsername(usernameValue).orElseThrow(InvalidCredentialsException::new);
 
-        if (!passwordEncoder.matches(input.password(), user.getPassword().asString())) {
+        var passwordIsValid = passwordEncoder.matches(input.password(), user.getPassword().asString());
+        if (!passwordIsValid) {
             throw new InvalidCredentialsException();
         }
 

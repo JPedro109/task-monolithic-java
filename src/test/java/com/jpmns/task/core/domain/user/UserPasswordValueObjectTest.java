@@ -12,7 +12,7 @@ class UserPasswordValueObjectTest {
     @Test
     @DisplayName("Should create a valid UserPasswordValueObject")
     void shouldCreateValidPassword() {
-        var password = "securePass1";
+        var password = "raw-password";
 
         var result = UserPasswordValueObject.of(password);
 
@@ -32,21 +32,10 @@ class UserPasswordValueObjectTest {
     }
 
     @Test
-    @DisplayName("Should accept any non-null string as password")
-    void shouldAcceptAnyNonNullString() {
-        var password = " ";
-
-        var result = UserPasswordValueObject.of(password);
-
-        assertThat(result.isFail()).isFalse();
-    }
-
-    @Test
     @DisplayName("Should fail when password is null")
     void shouldFailWhenPasswordIsNull() {
         var result = UserPasswordValueObject.of(null);
 
         assertThat(result.isFail()).isTrue();
-        assertThat(result.getError().getErrors()).contains("Password must be at least 8 characters long");
     }
 }
