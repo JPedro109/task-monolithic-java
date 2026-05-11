@@ -13,7 +13,7 @@ import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 
 @Configuration
-@ConditionalOnProperty(name = "management.tracing.enabled", havingValue = "false", matchIfMissing = false)
+@ConditionalOnProperty(name = "management.tracing.enabled", havingValue = "true")
 public class OtelBaggageConfig {
 
     @Bean
