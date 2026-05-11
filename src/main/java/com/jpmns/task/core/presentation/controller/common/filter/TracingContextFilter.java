@@ -26,7 +26,7 @@ public class TracingContextFilter extends OncePerRequestFilter {
 
     private static final String MDC_USER_ID = "user-id";
     private static final String MDC_CORRELATION_ID = "correlation-id";
-    private static final String MDC_URI = "uri";
+    private static final String MDC_PATH = "path";
     private static final String MDC_METHOD = "method";
 
     @Override
@@ -69,8 +69,8 @@ public class TracingContextFilter extends OncePerRequestFilter {
         baggageBuilder.put(MDC_CORRELATION_ID, correlationId);
 
         var uri = getUri(request);
-        MDC.put(MDC_URI, uri);
-        baggageBuilder.put(MDC_URI, uri);
+        MDC.put(MDC_PATH, uri);
+        baggageBuilder.put(MDC_PATH, uri);
 
         var method = getMethod(request);
         MDC.put(MDC_METHOD, method);
@@ -80,7 +80,7 @@ public class TracingContextFilter extends OncePerRequestFilter {
     private void clear() {
         MDC.remove(MDC_USER_ID);
         MDC.remove(MDC_CORRELATION_ID);
-        MDC.remove(MDC_URI);
+        MDC.remove(MDC_PATH);
         MDC.remove(MDC_METHOD);
     }
 
