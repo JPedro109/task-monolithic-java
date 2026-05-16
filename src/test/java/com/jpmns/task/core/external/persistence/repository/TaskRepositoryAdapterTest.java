@@ -21,8 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
 import com.jpmns.task.core.external.persistence.dao.TaskJpaDao;
 import com.jpmns.task.core.external.persistence.model.TaskJpaModel;
-import com.jpmns.task.core.fixture.TaskFixture;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.TaskFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
 class TaskRepositoryAdapterTest {

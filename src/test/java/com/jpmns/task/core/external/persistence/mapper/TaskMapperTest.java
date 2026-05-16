@@ -9,8 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.jpmns.task.core.external.persistence.model.TaskJpaModel;
-import com.jpmns.task.core.fixture.TaskFixture;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.TaskFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 class TaskMapperTest {
 

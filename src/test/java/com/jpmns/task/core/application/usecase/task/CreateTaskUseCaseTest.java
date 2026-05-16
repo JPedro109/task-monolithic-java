@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
 import com.jpmns.task.core.application.usecase.task.dto.input.CreateTaskInputDTO;
 import com.jpmns.task.core.application.usecase.task.implementation.CreateTaskUseCaseImpl;
-import com.jpmns.task.core.fixture.TaskFixture;
+import com.jpmns.task.shared.fixture.TaskFixture;
 
 @ExtendWith(MockitoExtension.class)
 class CreateTaskUseCaseTest {

@@ -19,7 +19,7 @@ import com.jpmns.task.core.application.port.persistence.repository.UserRepositor
 import com.jpmns.task.core.application.usecase.user.dto.input.DeleteUserInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.implementation.DeleteUserUseCaseImpl;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteUserUseCaseTest {

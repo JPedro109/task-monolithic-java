@@ -15,7 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import com.jpmns.task.core.domain.user.UserEntity;
 import com.jpmns.task.core.external.persistence.model.UserJpaModel;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @DataJpaTest
 @DisplayName("UserJpaDao Tests")

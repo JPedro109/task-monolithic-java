@@ -21,8 +21,8 @@ import com.jpmns.task.core.application.usecase.task.dto.input.UpdateTaskInputDTO
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
 import com.jpmns.task.core.application.usecase.task.implementation.UpdateTaskUseCaseImpl;
-import com.jpmns.task.core.fixture.TaskFixture;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.TaskFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateTaskUseCaseTest {

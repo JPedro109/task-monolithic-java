@@ -1,4 +1,4 @@
-package com.jpmns.task.core.controller;
+package com.jpmns.task.core.presentation.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -39,9 +39,8 @@ import com.jpmns.task.core.application.usecase.task.interfaces.ListTasksUseCase;
 import com.jpmns.task.core.application.usecase.task.interfaces.MarkTaskAsFinishedUseCase;
 import com.jpmns.task.core.application.usecase.task.interfaces.UpdateTaskUseCase;
 import com.jpmns.task.core.domain.task.TaskEntity;
-import com.jpmns.task.core.fixture.TaskFixture;
-import com.jpmns.task.core.presentation.controller.TaskController;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
+import com.jpmns.task.shared.fixture.TaskFixture;
 import com.jpmns.task.shared.security.WithJwtTokenMock;
 
 @WebMvcTest(TaskController.class)

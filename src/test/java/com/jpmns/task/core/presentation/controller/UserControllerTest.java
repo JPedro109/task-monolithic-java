@@ -1,4 +1,4 @@
-package com.jpmns.task.core.controller;
+package com.jpmns.task.core.presentation.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -33,9 +33,8 @@ import com.jpmns.task.core.application.usecase.user.interfaces.CreateUserUseCase
 import com.jpmns.task.core.application.usecase.user.interfaces.DeleteUserUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.UpdateUserPasswordUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.UpdateUsernameUseCase;
-import com.jpmns.task.core.fixture.UserFixture;
-import com.jpmns.task.core.presentation.controller.UserController;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
+import com.jpmns.task.shared.fixture.UserFixture;
 import com.jpmns.task.shared.security.WithJwtTokenMock;
 
 @WebMvcTest(UserController.class)

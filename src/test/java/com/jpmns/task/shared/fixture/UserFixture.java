@@ -1,4 +1,4 @@
-package com.jpmns.task.core.fixture;
+package com.jpmns.task.shared.fixture;
 
 import com.jpmns.task.core.domain.user.UserEntity;
 

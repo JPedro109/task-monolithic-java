@@ -1,4 +1,4 @@
-package com.jpmns.task.core.controller;
+package com.jpmns.task.core.presentation.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -25,9 +25,8 @@ import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDT
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.interfaces.RefreshUserTokenUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.UserLoginUseCase;
-import com.jpmns.task.core.fixture.UserFixture;
-import com.jpmns.task.core.presentation.controller.AuthController;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @WebMvcTest(AuthController.class)
 @Import({SecurityConfig.class, GlobalExceptionHandler.class})

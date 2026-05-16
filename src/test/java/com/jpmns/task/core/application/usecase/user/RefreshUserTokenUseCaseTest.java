@@ -22,7 +22,7 @@ import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
 import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.implementation.RefreshUserTokenUseCaseImpl;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
 class RefreshUserTokenUseCaseTest {

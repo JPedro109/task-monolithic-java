@@ -19,7 +19,7 @@ import com.jpmns.task.core.application.usecase.user.dto.input.GetUserByIdInputDT
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.implementation.GetUserByIdUseCaseImpl;
 import com.jpmns.task.core.domain.common.exception.DomainException;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
 class GetUserByIdUseCaseTest {

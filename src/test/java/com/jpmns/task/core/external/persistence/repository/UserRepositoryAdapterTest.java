@@ -22,7 +22,7 @@ import com.jpmns.task.core.domain.user.UserEntity;
 import com.jpmns.task.core.domain.user.valueobject.UsernameValueObject;
 import com.jpmns.task.core.external.persistence.dao.UserJpaDao;
 import com.jpmns.task.core.external.persistence.model.UserJpaModel;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
 class UserRepositoryAdapterTest {

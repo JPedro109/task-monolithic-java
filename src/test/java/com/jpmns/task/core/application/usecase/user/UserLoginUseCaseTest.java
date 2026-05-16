@@ -23,7 +23,7 @@ import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.implementation.UserLoginUseCaseImpl;
 import com.jpmns.task.core.domain.user.valueobject.UsernameValueObject;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
 class UserLoginUseCaseTest {

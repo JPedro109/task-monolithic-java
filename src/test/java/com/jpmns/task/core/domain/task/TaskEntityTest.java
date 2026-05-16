@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.jpmns.task.core.domain.common.exception.DomainException;
-import com.jpmns.task.core.fixture.TaskFixture;
+import com.jpmns.task.shared.fixture.TaskFixture;
 
 class TaskEntityTest {
 

@@ -19,7 +19,7 @@ import com.jpmns.task.core.application.port.security.PasswordEncoder;
 import com.jpmns.task.core.application.usecase.user.dto.input.CreateUserInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.core.application.usecase.user.implementation.CreateUserUseCaseImpl;
-import com.jpmns.task.core.fixture.UserFixture;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
 class CreateUserUseCaseTest {
