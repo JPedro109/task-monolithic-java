@@ -97,15 +97,11 @@ management:
       remote-fields:
         - correlation-id
         - user-id
-        - uri
-        - method
       correlation:
         enabled: true
         fields:
           - correlation-id
           - user-id
-          - uri
-          - method
 
 logging:
   level:
