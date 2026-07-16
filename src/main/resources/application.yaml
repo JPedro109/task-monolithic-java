@@ -93,7 +93,6 @@ management:
 logging:
   level:
     com.jpmns.task: ${app.log.level}
-    org:
-      security: off
+    org.springframework.security: OFF
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    correlation: "[correlation-id=%X{correlation-id}] [user-id=%X{user-id}] [method=%X{method}] [uri=%X{path}] "
