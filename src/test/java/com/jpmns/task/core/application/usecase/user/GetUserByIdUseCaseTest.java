@@ -42,7 +42,6 @@ class GetUserByIdUseCaseTest {
 
         assertThat(output.id()).isEqualTo(userId.asString());
         assertThat(output.username()).isEqualTo(user.getUsername().asString());
-        assertThat(output.password()).isEqualTo(user.getPassword().asString());
         assertThat(output.createdAt()).isNotNull();
         verify(userRepository).findById(userId);
     }
@@ -57,7 +56,6 @@ class GetUserByIdUseCaseTest {
 
         var output = useCase.execute(new GetUserByIdInputDTO(userId.asString()));
 
-        assertThat(output.password()).isEqualTo(user.getPassword().asString());
         assertThat(output).hasNoNullFieldsOrPropertiesExcept("updatedAt");
     }
 

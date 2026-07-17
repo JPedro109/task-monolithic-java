@@ -37,7 +37,6 @@ public class GetUserByIdUseCaseImpl implements GetUserByIdUseCase {
         return new UserOutputDTO(
                 user.getId().asString(),
                 user.getUsername().asString(),
-                user.getPassword().asString(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );

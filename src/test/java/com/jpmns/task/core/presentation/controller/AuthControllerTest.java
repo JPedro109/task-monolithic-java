@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,6 +22,7 @@ import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.usecase.user.dto.output.RefreshUserTokenOutputDTO;
 import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
+import com.jpmns.task.core.application.usecase.user.interfaces.GetUserByIdUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.RefreshUserTokenUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.UserLoginUseCase;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
@@ -45,7 +45,7 @@ class AuthControllerTest {
     private Token token;
 
     @MockitoBean
-    private UserDetailsService userDetailsService;
+    private GetUserByIdUseCase getUserByIdUseCase;
 
     @Nested
     @DisplayName("POST /api/v1/auth/login")

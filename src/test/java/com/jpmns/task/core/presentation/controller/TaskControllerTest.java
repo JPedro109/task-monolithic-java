@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -38,6 +37,7 @@ import com.jpmns.task.core.application.usecase.task.interfaces.DeleteTaskUseCase
 import com.jpmns.task.core.application.usecase.task.interfaces.ListTasksUseCase;
 import com.jpmns.task.core.application.usecase.task.interfaces.MarkTaskAsFinishedUseCase;
 import com.jpmns.task.core.application.usecase.task.interfaces.UpdateTaskUseCase;
+import com.jpmns.task.core.application.usecase.user.interfaces.GetUserByIdUseCase;
 import com.jpmns.task.core.domain.task.TaskEntity;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
 import com.jpmns.task.shared.fixture.TaskFixture;
@@ -69,7 +69,7 @@ class TaskControllerTest {
     private Token token;
 
     @MockitoBean
-    private UserDetailsService userDetailsService;
+    private GetUserByIdUseCase getUserByIdUseCase;
 
     private TaskOutputDTO buildTaskOutput(TaskEntity task) {
         var taskId = task.getId();

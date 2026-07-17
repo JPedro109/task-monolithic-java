@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -31,6 +30,7 @@ import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundExcept
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
 import com.jpmns.task.core.application.usecase.user.interfaces.CreateUserUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.DeleteUserUseCase;
+import com.jpmns.task.core.application.usecase.user.interfaces.GetUserByIdUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.UpdateUserPasswordUseCase;
 import com.jpmns.task.core.application.usecase.user.interfaces.UpdateUsernameUseCase;
 import com.jpmns.task.core.presentation.controller.common.handler.GlobalExceptionHandler;
@@ -60,7 +60,7 @@ class UserControllerTest {
     private Token token;
 
     @MockitoBean
-    private UserDetailsService userDetailsService;
+    private GetUserByIdUseCase getUserByIdUseCase;
 
     @Nested
     @DisplayName("POST /api/v1/users")
