@@ -1,18 +1,18 @@
-# Project Structure
+# Estrutura do Projeto
 
-## Source layout
+## Layout do código-fonte
 
 ```
 src/main/java/com/jpmns/task/
-├── TaskApplication.java              # Spring Boot entry point
-├── configuration/                    # Framework config (not covered by JaCoCo)
-│   ├── security/SecurityConfig.java  # Spring Security filter chain
+├── TaskApplication.java              # Ponto de entrada do Spring Boot
+├── configuration/                    # Configurações de framework (não cobertas pelo JaCoCo)
+│   ├── security/SecurityConfig.java  # Cadeia de filtros do Spring Security
 │   ├── swagger/SwaggerConfig.java    # OpenAPI / Swagger UI
 │   └── tracing/OtelBaggageConfig.java
 ├── core/
-│   ├── domain/                       # Pure business logic — no framework dependencies
+│   ├── domain/                       # Lógica de negócio pura — sem dependências de framework
 │   │   ├── common/
-│   │   │   ├── abstracts/Entity.java # Base entity (id + createdAt + validateOrThrow)
+│   │   │   ├── abstracts/Entity.java # Entidade base (id + createdAt + validateOrThrow)
 │   │   │   ├── exception/DomainException.java
 │   │   │   └── valueobject/IdValueObject.java
 │   │   ├── task/
@@ -21,81 +21,81 @@ src/main/java/com/jpmns/task/
 │   │   └── user/
 │   │       ├── UserEntity.java
 │   │       └── valueobject/  (UserEmailValueObject, UsernameValueObject, UserPasswordValueObject)
-│   ├── application/                  # Use cases and port interfaces
+│   ├── application/                  # Casos de uso e interfaces de porta
 │   │   ├── port/
 │   │   │   ├── persistence/repository/  # TaskRepository, UserRepository (interfaces)
 │   │   │   └── security/               # Token, PasswordEncoder (interfaces)
 │   │   └── usecase/
 │   │       ├── task/
-│   │       │   ├── interfaces/       # One interface per use case
-│   │       │   ├── implementation/   # @Service implementations
-│   │       │   ├── dto/input/        # Input DTOs (records)
-│   │       │   └── dto/output/       # Output DTOs (records)
-│   │       └── user/                 # Same structure as task
-│   ├── external/                     # Infrastructure adapters
+│   │       │   ├── interfaces/       # Uma interface por caso de uso
+│   │       │   ├── implementation/   # Implementações com @Service
+│   │       │   ├── dto/input/        # DTOs de entrada (records)
+│   │       │   └── dto/output/       # DTOs de saída (records)
+│   │       └── user/                 # Mesma estrutura que task
+│   ├── external/                     # Adaptadores de infraestrutura
 │   │   ├── persistence/
-│   │   │   ├── dao/                  # Spring Data JPA interfaces (TaskJpaDao, UserJpaDao)
-│   │   │   ├── model/                # JPA @Entity models (TaskJpaModel, UserJpaModel)
-│   │   │   ├── mapper/               # Static mapper classes (domain ↔ JPA model)
-│   │   │   └── repository/           # @Repository adapters implementing port interfaces
+│   │   │   ├── dao/                  # Interfaces Spring Data JPA (TaskJpaDao, UserJpaDao)
+│   │   │   ├── model/                # Modelos @Entity do JPA (TaskJpaModel, UserJpaModel)
+│   │   │   ├── mapper/               # Classes de mapeamento estático (domínio ↔ modelo JPA)
+│   │   │   └── repository/           # Adaptadores @Repository implementando interfaces de porta
 │   │   └── security/
 │   │       ├── filter/JwtAuthenticationFilter.java
 │   │       ├── service/UserDetailsServiceImpl.java
 │   │       ├── PasswordEncoderAdapter.java
 │   │       └── TokenAdapter.java
-│   └── presentation/                 # HTTP layer
+│   └── presentation/                 # Camada HTTP
 │       └── controller/
 │           ├── AuthController.java
 │           ├── TaskController.java
 │           ├── UserController.java
-│           ├── documentation/        # Swagger @Operation annotations (separate from controllers)
-│           ├── payload/              # Request/Response record classes
+│           ├── documentation/        # Anotações @Operation do Swagger (separadas dos controllers)
+│           ├── payload/              # Classes record de Request/Response
 │           └── common/
 │               ├── handler/GlobalExceptionHandler.java
-│               ├── filter/           # Servlet filters
+│               ├── filter/           # Filtros Servlet
 │               └── resolver/AuthenticatedUserResolver.java
 └── shared/
-    └── type/Result.java              # Generic Result<T, E> for value object validation
+    └── type/Result.java              # Result<T, E> genérico para validação de value objects
 ```
 
-## Architecture rules (Clean Architecture)
+## Regras de arquitetura (Clean Architecture)
 
-- **Domain** has zero Spring/JPA dependencies. Entities and value objects are plain Java.
-- **Value objects** are created via a static `of(...)` factory that returns `Result<VO, DomainException>`. Never instantiate directly.
-- **Use cases** are defined as interfaces in `usecase/.../interfaces/` and implemented in `usecase/.../implementation/`. Controllers depend only on the interface.
-- **Port interfaces** (`TaskRepository`, `Token`, `PasswordEncoder`) live in `application/port/` and are implemented by adapters in `external/`. The domain and application layers never import from `external/`.
-- **Mappers** are static utility classes with no state. They translate between domain entities and JPA models (or DTOs).
-- **Controllers** implement a `*ControllerDoc` interface that holds all Swagger annotations, keeping the controller class clean.
-- **`AuthenticatedUserResolver`** is the single point for extracting the authenticated user ID from the `SecurityContext`.
+- O **Domínio** não possui nenhuma dependência de Spring/JPA. Entidades e value objects são Java puro.
+- **Value objects** são criados via factory estática `of(...)` que retorna `Result<VO, DomainException>`. Nunca instancie diretamente.
+- **Casos de uso** são definidos como interfaces em `usecase/.../interfaces/` e implementados em `usecase/.../implementation/`. Controllers dependem apenas da interface.
+- **Interfaces de porta** (`TaskRepository`, `Token`, `PasswordEncoder`) ficam em `application/port/` e são implementadas por adaptadores em `external/`. As camadas de domínio e aplicação nunca importam de `external/`.
+- **Mappers** são classes utilitárias estáticas sem estado. Traduzem entre entidades de domínio e modelos JPA (ou DTOs).
+- **Controllers** implementam uma interface `*ControllerDoc` que concentra todas as anotações Swagger, mantendo a classe do controller limpa.
+- **`AuthenticatedUserResolver`** é o único ponto de extração do ID do usuário autenticado a partir do `SecurityContext`.
 
-## Test layout
+## Layout de testes
 
 ```
 src/test/java/com/jpmns/task/
 ├── core/
-│   ├── application/usecase/   # Unit tests for use cases (Mockito, no Spring context)
-│   ├── controller/            # Unit tests for controllers (MockMvc slice)
-│   ├── domain/                # Unit tests for entities and value objects
-│   ├── external/              # Unit tests for adapters and mappers
-│   └── fixture/               # TaskFixture, UserFixture — shared test data builders
-├── integration/               # Full-stack integration tests (Testcontainers PostgreSQL)
+│   ├── application/usecase/   # Testes unitários de casos de uso (Mockito, sem contexto Spring)
+│   ├── controller/            # Testes unitários de controllers (slice MockMvc)
+│   ├── domain/                # Testes unitários de entidades e value objects
+│   ├── external/              # Testes unitários de adaptadores e mappers
+│   └── fixture/               # TaskFixture, UserFixture — construtores de dados de teste compartilhados
+├── integration/               # Testes de integração completos (Testcontainers PostgreSQL)
 │   ├── common/
-│   │   ├── abstracts/IntegrationTestBase.java  # Base class: @SpringBootTest + MockMvc
+│   │   ├── abstracts/IntegrationTestBase.java  # Classe base: @SpringBootTest + MockMvc
 │   │   ├── container/PostgresContainerConfig.java
-│   │   └── sql/SqlCreateSeed.java              # Annotation: seeds + cleans DB per test
+│   │   └── sql/SqlCreateSeed.java              # Anotação: popula e limpa o BD por teste
 │   ├── AuthIntegrationTest.java
 │   ├── TaskIntegrationTest.java
 │   └── UserIntegrationTest.java
 └── shared/security/
-    └── WithJwtTokenMock.java  # Annotation to inject a mock JWT principal in tests
+    └── WithJwtTokenMock.java  # Anotação para injetar um principal JWT mockado nos testes
 ```
 
-## Key conventions
+## Convenções principais
 
-- **Naming**: `PascalCase` for types, `camelCase` for methods/fields, `UPPER_SNAKE_CASE` for constants, lowercase packages.
-- **Imports**: static imports first, then grouped `java → javax → jakarta → org → com`, alphabetically sorted, no wildcards.
-- **Formatting**: 4-space indentation, no tabs, max 120-char lines, braces always required, opening brace on same line.
-- **Logging**: use SLF4J `Logger` (never `System.out`/`System.err`/`printStackTrace()`). Log at `INFO` on entry and exit of controller methods.
-- **IDs**: always `UUID` strings at the domain boundary; `UUID` objects in JPA models.
-- **Database schema**: managed exclusively by Flyway. Never use `ddl-auto: create/update`. New migrations follow `V{n}__{description}.sql`.
-- **Checkstyle**: enforced on every build. Documentation classes (`**/documentation/**`) are excluded.
+- **Nomenclatura**: `PascalCase` para tipos, `camelCase` para métodos/campos, `UPPER_SNAKE_CASE` para constantes, pacotes em letras minúsculas.
+- **Imports**: imports estáticos primeiro, depois agrupados `java → javax → jakarta → org → com`, ordenados alfabeticamente, sem wildcards.
+- **Formatação**: indentação de 4 espaços, sem tabs, máximo de 120 caracteres por linha, chaves sempre obrigatórias, chave de abertura na mesma linha.
+- **Logging**: use `Logger` do SLF4J (nunca `System.out`/`System.err`/`printStackTrace()`). Logue em nível `INFO` na entrada e saída dos métodos de controller.
+- **IDs**: sempre strings `UUID` na fronteira do domínio; objetos `UUID` nos modelos JPA.
+- **Schema do banco**: gerenciado exclusivamente pelo Flyway. Nunca use `ddl-auto: create/update`. Novas migrações seguem o padrão `V{n}__{descricao}.sql`.
+- **Checkstyle**: aplicado em todo build. Classes de documentação (`**/documentation/**`) são excluídas.

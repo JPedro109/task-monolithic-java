@@ -1,67 +1,67 @@
-# Tech Stack
+# Stack Tecnológica
 
 ## Core
 
-| Layer | Technology |
-|-------|-----------|
-| Language | Java 21 |
+| Camada | Tecnologia |
+|--------|-----------|
+| Linguagem | Java 21 |
 | Framework | Spring Boot 4 |
-| Database | PostgreSQL 15 |
-| Migrations | Flyway (versioned scripts in `src/main/resources/db/migration/`) |
+| Banco de Dados | PostgreSQL 15 |
+| Migrações | Flyway (scripts versionados em `src/main/resources/db/migration/`) |
 | ORM | Spring Data JPA / Hibernate |
-| Security | Spring Security + JWT via JJWT 0.12.6 |
-| API Docs | SpringDoc OpenAPI (Swagger UI) |
-| Build | Gradle 8 with Kotlin DSL (`build.gradle.kts`) |
+| Segurança | Spring Security + JWT via JJWT 0.12.6 |
+| Documentação de API | SpringDoc OpenAPI (Swagger UI) |
+| Build | Gradle 8 com Kotlin DSL (`build.gradle.kts`) |
 
-## Observability
+## Observabilidade
 
 - OpenTelemetry (Spring Boot starter)
 - Micrometer + OTLP registry
-- Spring Boot Actuator (exposes `health`, `info`, `metrics`)
+- Spring Boot Actuator (expõe `health`, `info`, `metrics`)
 - Prometheus + Grafana via Docker Compose
 
-## Testing
+## Testes
 
-| Tool | Purpose |
-|------|---------|
-| JUnit 5 | Unit and integration tests |
-| Mockito | Mocking in unit tests (`@ExtendWith(MockitoExtension.class)`) |
-| Testcontainers (PostgreSQL) | Real DB for integration tests |
-| Spring MockMvc | HTTP-layer integration tests |
-| JaCoCo | Code coverage (minimum 85%, enforced at build time) |
-| Checkstyle 10.21.4 | Static analysis (zero warnings allowed) |
+| Ferramenta | Finalidade |
+|------------|-----------|
+| JUnit 5 | Testes unitários e de integração |
+| Mockito | Mocking em testes unitários (`@ExtendWith(MockitoExtension.class)`) |
+| Testcontainers (PostgreSQL) | BD real para testes de integração |
+| Spring MockMvc | Testes de integração na camada HTTP |
+| JaCoCo | Cobertura de código (mínimo de 85%, verificado no build) |
+| Checkstyle 10.21.4 | Análise estática (zero avisos permitidos) |
 
-## Common Commands
+## Comandos Comuns
 
 ```bash
-# Run the app (requires PostgreSQL running or Docker stack up)
+# Executar a aplicação (requer PostgreSQL rodando ou stack Docker no ar)
 ./gradlew bootRun
 
-# Run all tests (requires Docker for Testcontainers)
+# Executar todos os testes (requer Docker para Testcontainers)
 ./gradlew test
 
-# Run tests + coverage check + Checkstyle
+# Executar testes + verificação de cobertura + Checkstyle
 ./gradlew check
 
-# Start infrastructure (PostgreSQL, Prometheus, Grafana, OTEL Collector)
+# Subir infraestrutura (PostgreSQL, Prometheus, Grafana, OTEL Collector)
 cd docker && docker compose up -d
 
-# View coverage report (after running tests)
+# Visualizar relatório de cobertura (após rodar os testes)
 # build/reports/jacoco/test/html/index.html
 ```
 
-## Key Configuration
+## Configurações Principais
 
-All runtime config is in `src/main/resources/application.yaml` and driven by environment variables:
+Toda a configuração de runtime está em `src/main/resources/application.yaml` e é controlada por variáveis de ambiente:
 
-| Variable | Default | Notes |
-|----------|---------|-------|
-| `DB_HOST` / `DB_PORT` / `DB_NAME` | `localhost` / `5432` / `task` | PostgreSQL connection |
+| Variável | Padrão | Observações |
+|----------|--------|-------------|
+| `DB_HOST` / `DB_PORT` / `DB_NAME` | `localhost` / `5432` / `task` | Conexão com o PostgreSQL |
 | `DB_USER` / `DB_PASSWORD` | `postgres` / `postgres` | |
-| `JWT_SECRET` | `change-me-...` | Must be ≥ 32 chars; always override in production |
+| `JWT_SECRET` | `change-me-...` | Deve ter ≥ 32 caracteres; sempre substitua em produção |
 | `JWT_ACCESS_EXPIRATION_MS` | `900000` (15 min) | |
-| `JWT_REFRESH_EXPIRATION_MS` | `604800000` (7 days) | |
-| `ENABLE_OTLP_COLLECTOR` | `false` | Set to `true` to push metrics |
-| `OTLP_COLLECTOR_URL` | — | Required when OTLP is enabled |
+| `JWT_REFRESH_EXPIRATION_MS` | `604800000` (7 dias) | |
+| `ENABLE_OTLP_COLLECTOR` | `false` | Defina como `true` para enviar métricas |
+| `OTLP_COLLECTOR_URL` | — | Obrigatório quando OTLP estiver habilitado |
 
-Integration tests use the `integration-test` Spring profile (`src/test/resources/application-integration-test.yaml`) and spin up a Testcontainers PostgreSQL instance automatically.
+Os testes de integração usam o perfil Spring `integration-test` (`src/test/resources/application-integration-test.yaml`) e sobem automaticamente uma instância PostgreSQL via Testcontainers.
