@@ -23,6 +23,9 @@ import com.jpmns.task.shared.fixture.UserFixture;
 @DisplayName("TaskJpaDao Tests")
 class TaskJpaDaoTest {
 
+    private static final UUID UNKNOWN_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID UNKNOWN_TASK_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
     @Autowired
     private TaskJpaDao taskJpaDao;
 
@@ -104,7 +107,7 @@ class TaskJpaDaoTest {
     @Test
     @DisplayName("Should return empty Optional when task id does not exist")
     void shouldReturnEmptyWhenTaskNotFoundById() {
-        var found = taskJpaDao.findById(UUID.randomUUID());
+        var found = taskJpaDao.findById(UNKNOWN_TASK_ID);
 
         assertThat(found).isEmpty();
     }
@@ -112,9 +115,7 @@ class TaskJpaDaoTest {
     @Test
     @DisplayName("Should return empty list when user has no tasks")
     void shouldReturnEmptyListWhenUserHasNoTasks() {
-        var otherUserId = UUID.randomUUID();
-
-        var tasks = taskJpaDao.findAllByUserId(otherUserId);
+        var tasks = taskJpaDao.findAllByUserId(UNKNOWN_USER_ID);
 
         assertThat(tasks).isEmpty();
     }
@@ -169,7 +170,7 @@ class TaskJpaDaoTest {
     @DisplayName("Should throw when saving a task with a non-existent user_id")
     void shouldThrowWhenSavingTaskWithNonExistentUserId() {
         var task = TaskFixture.aTask();
-        var orphanModel = buildTask(task, UUID.randomUUID());
+        var orphanModel = buildTask(task, UNKNOWN_USER_ID);
 
         assertThatThrownBy(() -> {
             taskJpaDao.save(orphanModel);

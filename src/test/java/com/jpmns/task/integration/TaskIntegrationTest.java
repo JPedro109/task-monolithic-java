@@ -9,8 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,6 +24,7 @@ class TaskIntegrationTest extends IntegrationTestBase {
 
     private static final String EXISTING_TASK_ID = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
     private static final String USER_ID_WITHOUT_TASK = "41a385a3-de9f-44bb-ac0f-7a9fd6ac11e1";
+    private static final String NON_EXISTING_TASK_ID = "00000000-0000-0000-0000-000000000001";
 
     @Nested
     @DisplayName("POST /api/v1/tasks")
@@ -148,10 +147,9 @@ class TaskIntegrationTest extends IntegrationTestBase {
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn404WhenTaskNotFound() throws Exception {
-            var taskId = UUID.randomUUID().toString();
             var taskName = "Updated name";
 
-            perform(taskId, taskName)
+            perform(NON_EXISTING_TASK_ID, taskName)
                     .andExpect(status().isNotFound());
         }
 
@@ -216,9 +214,7 @@ class TaskIntegrationTest extends IntegrationTestBase {
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn404WhenTaskNotFound() throws Exception {
-            var taskId = UUID.randomUUID().toString();
-
-            perform(taskId)
+            perform(NON_EXISTING_TASK_ID)
                     .andExpect(status().isNotFound());
         }
 
@@ -264,9 +260,7 @@ class TaskIntegrationTest extends IntegrationTestBase {
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn404WhenTaskNotFound() throws Exception {
-            var taskId = UUID.randomUUID().toString();
-
-            perform(taskId)
+            perform(NON_EXISTING_TASK_ID)
                     .andExpect(status().isNotFound());
         }
 

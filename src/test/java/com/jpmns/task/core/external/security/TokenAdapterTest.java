@@ -3,13 +3,13 @@ package com.jpmns.task.core.external.security;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.jpmns.task.configuration.security.SecurityConfigProperties;
 import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
+import com.jpmns.task.shared.fixture.UserFixture;
 
 class TokenAdapterTest {
 
@@ -21,13 +21,14 @@ class TokenAdapterTest {
 
     @BeforeEach
     void setUp() {
-        tokenAdapter = new TokenAdapter(SECRET, ACCESS_EXPIRATION_MS, REFRESH_EXPIRATION_MS);
+        tokenAdapter = new TokenAdapter(buildProperties(SECRET, ACCESS_EXPIRATION_MS, REFRESH_EXPIRATION_MS));
     }
 
     @Test
     @DisplayName("Should generate a non-null access token for a given subject")
     void shouldGenerateAccessToken() {
-        var sub = UUID.randomUUID().toString();
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
 
         var token = tokenAdapter.generateAccessToken(sub);
 
@@ -38,7 +39,8 @@ class TokenAdapterTest {
     @Test
     @DisplayName("Should generate a non-null refresh token for a given subject")
     void shouldGenerateRefreshToken() {
-        var sub = UUID.randomUUID().toString();
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
 
         var token = tokenAdapter.generateRefreshToken(sub);
 
@@ -49,7 +51,8 @@ class TokenAdapterTest {
     @Test
     @DisplayName("Should generate different tokens for access and refresh")
     void shouldGenerateDifferentTokensForAccessAndRefresh() {
-        var sub = UUID.randomUUID().toString();
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
 
         var accessToken = tokenAdapter.generateAccessToken(sub);
         var refreshToken = tokenAdapter.generateRefreshToken(sub);
@@ -60,7 +63,8 @@ class TokenAdapterTest {
     @Test
     @DisplayName("Should validate a valid access token and return the correct subject")
     void shouldValidateAccessTokenAndReturnSubject() {
-        var sub = UUID.randomUUID().toString();
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
         var token = tokenAdapter.generateAccessToken(sub);
 
         var decoded = tokenAdapter.tokenValidation(token);
@@ -72,7 +76,8 @@ class TokenAdapterTest {
     @Test
     @DisplayName("Should validate a valid refresh token and return the correct subject")
     void shouldValidateRefreshTokenAndReturnSubject() {
-        var sub = UUID.randomUUID().toString();
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
         var token = tokenAdapter.generateRefreshToken(sub);
 
         var decoded = tokenAdapter.tokenValidation(token);
@@ -100,12 +105,12 @@ class TokenAdapterTest {
     @Test
     @DisplayName("Should throw InvalidTokenException when token is signed with a different secret")
     void shouldThrowWhenTokenSignedWithDifferentSecret() {
-        var otherAdapter = new TokenAdapter(
-                "another-secret-key-must-be-at-least-32-chars!",
-                ACCESS_EXPIRATION_MS,
-                REFRESH_EXPIRATION_MS
-        );
-        var sub = UUID.randomUUID().toString();
+        var properties = buildProperties("another-secret-key-must-be-at-least-32-chars!",
+                    ACCESS_EXPIRATION_MS,
+                    REFRESH_EXPIRATION_MS);
+        var otherAdapter = new TokenAdapter(properties);
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
         var token = otherAdapter.generateAccessToken(sub);
 
         assertThatThrownBy(() -> tokenAdapter.tokenValidation(token))
@@ -115,11 +120,16 @@ class TokenAdapterTest {
     @Test
     @DisplayName("Should throw InvalidTokenException when token is expired")
     void shouldThrowWhenTokenIsExpired() {
-        var expiredAdapter = new TokenAdapter(SECRET, -1L, -1L);
-        var sub = UUID.randomUUID().toString();
+        var expiredAdapter = new TokenAdapter(buildProperties(SECRET, -1L, -1L));
+        var user = UserFixture.aUser();
+        var sub = user.getId().asString();
         var token = expiredAdapter.generateAccessToken(sub);
 
         assertThatThrownBy(() -> tokenAdapter.tokenValidation(token))
                 .isInstanceOf(InvalidTokenException.class);
+    }
+
+    private SecurityConfigProperties buildProperties(String secret, long accessMs, long refreshMs) {
+        return new SecurityConfigProperties(new SecurityConfigProperties.Jwt(secret, accessMs, refreshMs));
     }
 }

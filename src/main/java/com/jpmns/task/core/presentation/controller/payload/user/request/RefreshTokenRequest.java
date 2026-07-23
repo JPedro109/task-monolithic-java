@@ -2,7 +2,7 @@ package com.jpmns.task.core.presentation.controller.payload.user.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-import com.jpmns.task.core.presentation.controller.documentation.payload.task.request.RefreshTokenRequestDoc;
+import com.jpmns.task.core.presentation.controller.documentation.payload.user.request.RefreshTokenRequestDoc;
 
 public record RefreshTokenRequest(
         @NotBlank String refreshToken

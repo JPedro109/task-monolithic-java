@@ -1,4 +1,4 @@
-package com.jpmns.task.core.presentation.controller.documentation.payload.task.request;
+package com.jpmns.task.core.presentation.controller.documentation.payload.user.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

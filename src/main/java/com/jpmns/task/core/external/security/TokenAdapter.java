@@ -7,9 +7,9 @@ import javax.crypto.SecretKey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.jpmns.task.configuration.security.SecurityConfigProperties;
 import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
 import com.jpmns.task.core.application.port.security.exception.InvalidTokenException;
@@ -31,12 +31,11 @@ public class TokenAdapter implements Token {
     private final long accessTokenExpirationMs;
     private final long refreshTokenExpirationMs;
 
-    public TokenAdapter(@Value("${security.jwt.secret}") String secret,
-                        @Value("${security.jwt.access-token-expiration-ms}") long accessTokenExpirationMs,
-                        @Value("${security.jwt.refresh-token-expiration-ms}") long refreshTokenExpirationMs) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.accessTokenExpirationMs = accessTokenExpirationMs;
-        this.refreshTokenExpirationMs = refreshTokenExpirationMs;
+    public TokenAdapter(SecurityConfigProperties properties) {
+        var jwt = properties.jwt();
+        this.secretKey = Keys.hmacShaKeyFor(jwt.secret().getBytes(StandardCharsets.UTF_8));
+        this.accessTokenExpirationMs = jwt.accessTokenExpirationMs();
+        this.refreshTokenExpirationMs = jwt.refreshTokenExpirationMs();
     }
 
     @Override

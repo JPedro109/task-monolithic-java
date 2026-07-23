@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -280,7 +279,7 @@ class TaskControllerTest {
         private ResultActions perform(String taskId, String taskName) throws Exception {
             var requestBody = """
                     {"taskName": "%s"}
-                    """.formatted(taskName);;
+                    """.formatted(taskName);
 
             return mockMvc.perform(put("/api/v1/tasks/{taskId}", taskId)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -309,9 +308,12 @@ class TaskControllerTest {
         @DisplayName("Should return 404 when task is not found")
         @WithJwtTokenMock
         void shouldReturn404WhenTaskIsNotFound() throws Exception {
+            var task = TaskFixture.aTask();
+            var taskId = task.getId();
+
             doThrow(new TaskNotFoundException()).when(deleteTaskUseCase).execute(any());
 
-            perform(UUID.randomUUID().toString())
+            perform(taskId.asString())
                     .andExpect(status().isNotFound());
         }
 
