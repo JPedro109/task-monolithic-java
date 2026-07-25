@@ -969,11 +969,11 @@ var password = user.getPassword();
 
 - Cubra o máximo de cenários possível. Sempre siga a estrutura de layout definida para cada tipo de teste.
 
-### Testes unitários de entities
+### Testes unitários de value objects
 
-Cobrem entidades de domínio (`*Entity`) e value objects (`*ValueObject`) — sem contexto Spring, sem Mockito.
+Cobrem value objects (`*ValueObject`) — sem contexto Spring, sem Mockito.
 
-**Value objects** — uma classe de teste por value object, sem anotações de extensão:
+Uma classe de teste por value object, sem anotações de extensão:
 
 - Happy path: criação com valor válido, verificar `isFail()` é `false` e `getValue().asString()` retorna o valor esperado.
 - Boundary cases: valores nos limites (mínimo, máximo, exato).
@@ -1002,7 +1002,11 @@ void shouldFailForBlankOrNullName(String name) {
 }
 ```
 
-**Entities** — uma classe de teste por entidade, sem anotações de extensão:
+### Testes unitários de entities
+
+Cobrem entidades de domínio (`*Entity`) — sem contexto Spring, sem Mockito.
+
+Uma classe de teste por entidade, sem anotações de extensão:
 
 - Happy path: construção com dados válidos, verificar todos os campos via getters.
 - Métodos de negócio: cada `update*` e `markAs*` tem ao menos um cenário de sucesso e um de falha.
