@@ -292,6 +292,124 @@ security:
     refresh-token-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
 ```
 
+## Convenções de documentação (Swagger / OpenAPI)
+
+Toda a documentação da API é declarada fora dos controllers, em interfaces e classes dedicadas dentro de `presentation/controller/documentation/`. Os controllers permanecem limpos — sem nenhuma anotação do SpringDoc.
+
+### `*ControllerDoc` — documentação de endpoints
+
+- Cada controller possui uma interface `*ControllerDoc` correspondente em `documentation/` (ex: `TaskControllerDoc`, `AuthControllerDoc`).
+- A interface é anotada com `@Tag(name = "...", description = "...")` e `@RequestMapping` com o path base do controller.
+- Endpoints que exigem autenticação recebem `@SecurityRequirement(name = "bearerAuth")` na interface (ou no método, quando apenas alguns endpoints do controller são protegidos).
+- Cada método da interface declara exatamente uma anotação `@Operation` e uma `@ApiResponses`.
+
+**`@Operation`** deve conter:
+- `summary`: título curto do endpoint (ex: `"Criar nova tarefa"`).
+- `description`: descrição em HTML com `<p>`, `<ul>`, `<li>`, `<code>` e `<blockquote>` quando necessário. Sempre mencione o header de autenticação em endpoints protegidos.
+- `requestBody` (quando aplicável): com `mediaType = "application/json"`, `schema` apontando para a classe de request e ao menos dois `@ExampleObject` — um válido e um inválido.
+- `parameters` (quando aplicável): para path variables, com `name`, `description`, `required = true` e `example`.
+
+**`@ApiResponses`** deve cobrir todos os status HTTP possíveis para o endpoint:
+- Sucesso (`2xx`): com `schema` e ao menos um `@ExampleObject` com corpo representativo.
+- Erros de validação (`400`): quando o endpoint aceita `@RequestBody`.
+- Não autenticado (`401`): em todo endpoint protegido.
+- Acesso negado (`403`): quando há verificação de ownership.
+- Não encontrado (`404`): quando o use case pode lançar `*NotFoundException`.
+- Conflito (`409`): quando há verificação de unicidade.
+- Erro interno (`500`): sempre presente, com exemplo padrão.
+
+Para respostas sem corpo (`204 No Content`), omita o `content` na `@ApiResponse`.
+
+```java
+@Tag(name = "Tasks", description = "Gerenciamento de tarefas — criação, listagem, atualização, exclusão e conclusão")
+@RequestMapping("/api/v1/tasks")
+@SecurityRequirement(name = "bearerAuth")
+public interface TaskControllerDoc {
+
+    @Operation(
+            summary = "Criar nova tarefa",
+            description = """
+                    <p>Cria uma nova tarefa associada ao usuário autenticado.</p>
+                    <p>A tarefa é criada com o status <code>finished: false</code> por padrão.</p>
+                    <p>Requer autenticação via <code>Authorization: Bearer &lt;accessToken&gt;</code>.</p>
+                    """,
+            requestBody = @RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreateTaskRequest.class),
+                            examples = {
+                                    @ExampleObject(name = "Tarefa válida", value = """
+                                            {"taskName": "Estudar Spring Boot"}
+                                            """),
+                                    @ExampleObject(name = "Nome em branco (inválido)", value = """
+                                            {"taskName": ""}
+                                            """)
+                            }
+                    )
+            )
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Tarefa criada com sucesso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskResponse.class),
+                            examples = @ExampleObject(name = "Tarefa criada", value = """
+                                    {
+                                      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                                      "taskName": "Estudar Spring Boot",
+                                      "finished": false
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "401", description = "Token ausente, inválido ou expirado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(name = "Não autenticado", value = """
+                                    {"status": 401, "detail": "Invalid or expired token"}
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Erro interno inesperado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(name = "Erro interno", value = """
+                                    {"status": 500, "detail": "Internal server error"}
+                                    """)))
+    })
+    ResponseEntity<TaskResponse> createTask(@Valid @org.springframework.web.bind.annotation.RequestBody CreateTaskRequest request);
+}
+```
+
+### `*RequestDoc` / `*ResponseDoc` — documentação de payloads
+
+- Cada record de request ou response implementa uma interface `*Doc` correspondente em `documentation/payload/{domínio}/request/` ou `.../response/`.
+- A interface é anotada com `@Schema(name = "NomeDaClasse", description = "...")`.
+- Cada método da interface declara `@Schema` com `description`, `example` e, quando aplicável, `minLength` / `maxLength`.
+- O record de request/response implementa a interface — as anotações `@Schema` dos métodos são herdadas automaticamente pelo SpringDoc.
+- Campos sensíveis (senha, token) devem ter `example` com valor fictício (nunca omitir o exemplo).
+
+```java
+// Interface de documentação
+@Schema(name = "CreateTaskRequest", description = "Dados para criação de uma nova tarefa")
+public interface CreateTaskRequestDoc {
+
+    @Schema(
+            description = "Nome da tarefa. Não pode ser vazio e deve ter no máximo 255 caracteres.",
+            example = "Estudar Spring Boot",
+            maxLength = 255)
+    String taskName();
+}
+
+// Record que implementa a interface
+public record CreateTaskRequest(
+        @NotBlank
+        @Size(max = 255)
+        String taskName()
+) implements CreateTaskRequestDoc { }
+```
+
+### Regras gerais de documentação
+
+- **Checkstyle é excluído** para toda a pasta `**/documentation/**` — anotações longas do SpringDoc são permitidas sem restrição de linha.
+- Nunca adicione anotações do SpringDoc (`@Operation`, `@ApiResponse`, `@Schema`, etc.) diretamente nos controllers ou nos records de request/response. Toda documentação pertence às interfaces `*Doc`.
+- Exemplos de corpo de resposta de erro devem seguir o formato Problem Details (RFC 7807): campos `type`, `title`, `status`, `detail`.
+- Os nomes dos `@ExampleObject` devem ser descritivos e em português, indicando o cenário representado (ex: `"Credenciais válidas"`, `"Username muito curto (inválido)"`).
+
 ## Layout de testes
 
 ```
