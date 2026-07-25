@@ -21,12 +21,7 @@ public class GetUserByIdUseCaseImpl implements GetUserByIdUseCase {
 
     @Override
     public UserOutputDTO execute(GetUserByIdInputDTO input) {
-        var idValueOrError = IdValueObject.of(input.id());
-        if (idValueOrError.isFail()) {
-            throw idValueOrError.getError();
-        }
-
-        var idValue = idValueOrError.getValue();
+        var idValue = IdValueObject.of(input.id()).getValueOrThrow();
 
         var user = userRepository.findById(idValue).orElseThrow(UserNotFoundException::new);
 

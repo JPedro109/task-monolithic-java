@@ -28,12 +28,7 @@ public class UserLoginUseCaseImpl implements UserLoginUseCase {
 
     @Override
     public UserLoginOutputDTO execute(UserLoginInputDTO input) {
-        var usernameValueOrError = UsernameValueObject.of(input.username());
-        if (usernameValueOrError.isFail()) {
-            throw usernameValueOrError.getError();
-        }
-
-        var usernameValue = usernameValueOrError.getValue();
+        var usernameValue = UsernameValueObject.of(input.username()).getValueOrThrow();
 
         var user = userRepository.findByUsername(usernameValue).orElseThrow(InvalidCredentialsException::new);
 

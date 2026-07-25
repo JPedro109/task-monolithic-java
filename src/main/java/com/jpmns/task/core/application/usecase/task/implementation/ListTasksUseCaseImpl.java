@@ -22,12 +22,8 @@ public class ListTasksUseCaseImpl implements ListTasksUseCase {
 
     @Override
     public List<TaskOutputDTO> execute(ListTasksInputDTO input) {
-        var userIdValueOrError = IdValueObject.of(input.userId());
-        if (userIdValueOrError.isFail()) {
-            throw userIdValueOrError.getError();
-        }
+        var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 
-        var userIdValue = userIdValueOrError.getValue();
         return taskRepository.findAllByUserId(userIdValue)
                 .stream()
                 .map(this::toOutput)

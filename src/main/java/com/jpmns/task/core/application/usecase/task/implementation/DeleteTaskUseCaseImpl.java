@@ -20,12 +20,8 @@ public class DeleteTaskUseCaseImpl implements DeleteTaskUseCase {
 
     @Override
     public void execute(DeleteTaskInputDTO input) {
-        var taskIdValueOrError = IdValueObject.of(input.taskId());
-        if (taskIdValueOrError.isFail()) {
-            throw taskIdValueOrError.getError();
-        }
+        var taskIdValue = IdValueObject.of(input.taskId()).getValueOrThrow();
 
-        var taskIdValue = taskIdValueOrError.getValue();
         var task = taskRepository.findById(taskIdValue).orElseThrow(TaskNotFoundException::new);
 
         var userIsOwnerTask = task.getUserId().asString().equals(input.userId());

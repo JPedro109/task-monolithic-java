@@ -24,7 +24,9 @@ public class TaskEntity extends Entity {
 
         var userIdResult = IdValueObject.of(userId);
         var taskNameResult = TaskNameValueObject.of(taskName);
-        validateOrThrow(List.of(userIdResult, taskNameResult));
+
+        var results = List.of(userIdResult, taskNameResult);
+        validateOrThrow(results);
 
         this.userId = userIdResult.getValue();
         this.taskName = taskNameResult.getValue();
@@ -53,11 +55,7 @@ public class TaskEntity extends Entity {
     }
 
     public void updateTaskName(String taskName) {
-        var taskNameResult = TaskNameValueObject.of(taskName);
-
-        validateOrThrow(List.of(taskNameResult));
-
-        this.taskName = taskNameResult.getValue();
+        this.taskName = TaskNameValueObject.of(taskName).getValueOrThrow();
     }
 
     public void markAsFinished() {

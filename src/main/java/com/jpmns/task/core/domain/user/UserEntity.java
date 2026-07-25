@@ -19,7 +19,8 @@ public class UserEntity extends Entity {
         var usernameResult = UsernameValueObject.of(username);
         var passwordResult = UserPasswordValueObject.of(password);
 
-        validateOrThrow(List.of(usernameResult, passwordResult));
+        var results = List.of(usernameResult, passwordResult);
+        validateOrThrow(results);
 
         this.username = usernameResult.getValue();
         this.password = passwordResult.getValue();
@@ -43,18 +44,10 @@ public class UserEntity extends Entity {
     }
 
     public void updateUsername(String username) {
-        var usernameResult = UsernameValueObject.of(username);
-
-        validateOrThrow(List.of(usernameResult));
-
-        this.username = usernameResult.getValue();
+        this.username = UsernameValueObject.of(username).getValueOrThrow();
     }
 
     public void updatePassword(String encodedPassword) {
-        var userPasswordResult = UserPasswordValueObject.of(encodedPassword);
-
-        validateOrThrow(List.of(userPasswordResult));
-
-        this.password = userPasswordResult.getValue();
+        this.password = UserPasswordValueObject.of(encodedPassword).getValueOrThrow();
     }
 }

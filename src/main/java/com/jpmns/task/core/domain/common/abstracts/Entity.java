@@ -29,10 +29,10 @@ public abstract class Entity {
         return createdAt;
     }
 
-    protected void validateOrThrow(List<Result<?, DomainException>> results) {
+    protected void validateOrThrow(List<Result<?>> results) {
         var errors = results.stream()
                 .filter(Result::isFail)
-                .map(Result::getError)
+                .map(e -> (DomainException) e.getError())
                 .toList();
 
         if (!errors.isEmpty()) {

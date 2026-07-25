@@ -2,7 +2,6 @@ package com.jpmns.task.core.domain.common.valueobject;
 
 import java.util.regex.Pattern;
 
-import com.jpmns.task.core.domain.common.exception.DomainException;
 import com.jpmns.task.core.domain.common.valueobject.exception.InvalidIdValueObjectException;
 import com.jpmns.task.shared.type.Result;
 
@@ -21,27 +20,29 @@ public class IdValueObject {
         return id;
     }
 
-    public static Result<IdValueObject, DomainException> of(String id) {
-        if (id == null || !UUID_PATTERN.matcher(id).matches()) {
-            return Result.fail(new InvalidIdValueObjectException());
-        }
-
-        return Result.success(new IdValueObject(id));
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
+
         if (!(o instanceof IdValueObject other)) {
             return false;
         }
+
         return asString().equals(other.asString());
     }
 
     @Override
     public int hashCode() {
         return asString().hashCode();
+    }
+
+    public static Result<IdValueObject> of(String id) {
+        if (id == null || !UUID_PATTERN.matcher(id).matches()) {
+            return Result.fail(new InvalidIdValueObjectException());
+        }
+
+        return Result.success(new IdValueObject(id));
     }
 }

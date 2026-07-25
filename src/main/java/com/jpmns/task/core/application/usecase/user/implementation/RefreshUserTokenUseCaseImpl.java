@@ -25,11 +25,7 @@ public class RefreshUserTokenUseCaseImpl implements RefreshUserTokenUseCase {
     public RefreshUserTokenOutputDTO execute(RefreshUserTokenInputDTO input) {
         var decodeTokenDto = token.tokenValidation(input.refreshToken());
 
-        var userIdValueOrError = IdValueObject.of(decodeTokenDto.sub());
-        if (userIdValueOrError.isFail()) {
-            throw new UserNotFoundException();
-        }
-        var userIdValue = userIdValueOrError.getValue();
+        var userIdValue = IdValueObject.of(decodeTokenDto.sub()).getValueOrThrow();
 
         var user = userRepository.findById(userIdValue).orElseThrow(UserNotFoundException::new);
 

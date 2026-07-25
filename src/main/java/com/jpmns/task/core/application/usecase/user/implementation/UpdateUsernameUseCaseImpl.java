@@ -21,12 +21,8 @@ public class UpdateUsernameUseCaseImpl implements UpdateUsernameUseCase {
 
     @Override
     public UpdateUsernameOutputDTO execute(UpdateUsernameInputDTO input) {
-        var userIdValueOrError = IdValueObject.of(input.userId());
-        if (userIdValueOrError.isFail()) {
-            throw userIdValueOrError.getError();
-        }
+        var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 
-        var userIdValue = userIdValueOrError.getValue();
         var user = userRepository.findById(userIdValue).orElseThrow(UserNotFoundException::new);
         user.updateUsername(input.newUsername());
 

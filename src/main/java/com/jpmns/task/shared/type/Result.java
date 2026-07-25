@@ -1,22 +1,22 @@
 package com.jpmns.task.shared.type;
 
-public class Result<T, E> {
+public class Result<T> {
 
     private final T value;
-    private final E error;
+    private final RuntimeException error;
     private final boolean success;
 
-    private Result(T value, E error, boolean success) {
+    private Result(T value, RuntimeException error, boolean success) {
         this.value = value;
         this.error = error;
         this.success = success;
     }
 
-    public static <T, E> Result<T, E> success(T value) {
+    public static <T> Result<T> success(T value) {
         return new Result<>(value, null, true);
     }
 
-    public static <T, E> Result<T, E> fail(E error) {
+    public static <T> Result<T> fail(RuntimeException error) {
         return new Result<>(null, error, false);
     }
 
@@ -32,7 +32,15 @@ public class Result<T, E> {
         return value;
     }
 
-    public E getError() {
+    public T getValueOrThrow() {
+        if (!success) {
+            throw error;
+        }
+
+        return value;
+    }
+
+    public RuntimeException getError() {
         if (success) {
             throw new IllegalStateException("The result is a success, error does not exist");
         }

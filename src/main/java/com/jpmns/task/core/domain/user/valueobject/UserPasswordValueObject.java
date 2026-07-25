@@ -1,6 +1,5 @@
 package com.jpmns.task.core.domain.user.valueobject;
 
-import com.jpmns.task.core.domain.common.exception.DomainException;
 import com.jpmns.task.core.domain.user.valueobject.exception.InvalidPasswordException;
 import com.jpmns.task.shared.type.Result;
 
@@ -12,7 +11,7 @@ public class UserPasswordValueObject {
         this.password = password;
     }
 
-    public static Result<UserPasswordValueObject, DomainException> of(String password) {
+    public static Result<UserPasswordValueObject> of(String password) {
         if (password == null) {
             return Result.fail(new InvalidPasswordException());
         }

@@ -2,7 +2,6 @@ package com.jpmns.task.core.domain.user.valueobject;
 
 import java.util.regex.Pattern;
 
-import com.jpmns.task.core.domain.common.exception.DomainException;
 import com.jpmns.task.core.domain.user.valueobject.exception.InvalidUsernameException;
 import com.jpmns.task.shared.type.Result;
 
@@ -17,7 +16,7 @@ public class UsernameValueObject {
         this.username = username;
     }
 
-    public static Result<UsernameValueObject, DomainException> of(String username) {
+    public static Result<UsernameValueObject> of(String username) {
         if (username == null || !USERNAME_PATTERN.matcher(username).matches()) {
             return Result.fail(new InvalidUsernameException());
         }
