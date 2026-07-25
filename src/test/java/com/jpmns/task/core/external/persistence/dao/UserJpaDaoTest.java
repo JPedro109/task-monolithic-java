@@ -29,21 +29,6 @@ class UserJpaDaoTest {
         userJpaDao.deleteAll();
     }
 
-    private UserJpaModel buildUser(UserEntity user) {
-        var id = user.getId();
-        var username = user.getUsername();
-        var password = user.getPassword();
-        var createdAt = user.getCreatedAt();
-
-        return new UserJpaModel(
-                UUID.fromString(id.asString()),
-                username.asString(),
-                password.asString(),
-                createdAt,
-                null
-        );
-    }
-
     @Test
     @DisplayName("Should save a user and return it with a populated id")
     void shouldSaveUser() {
@@ -190,5 +175,20 @@ class UserJpaDaoTest {
         var all = userJpaDao.findAll();
 
         assertThat(all).hasSize(1);
+    }
+
+    private UserJpaModel buildUser(UserEntity user) {
+        var id = user.getId();
+        var username = user.getUsername();
+        var password = user.getPassword();
+        var createdAt = user.getCreatedAt();
+
+        return new UserJpaModel(
+                UUID.fromString(id.asString()),
+                username.asString(),
+                password.asString(),
+                createdAt,
+                null
+        );
     }
 }

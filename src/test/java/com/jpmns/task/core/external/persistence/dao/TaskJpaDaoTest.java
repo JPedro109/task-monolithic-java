@@ -42,37 +42,6 @@ class TaskJpaDaoTest {
         userId = model.getId();
     }
 
-    private UserJpaModel buildUser(UserEntity user) {
-        var userId = user.getId();
-        var username = user.getUsername();
-        var password = user.getPassword();
-        var createdAt = user.getCreatedAt();
-
-        return new UserJpaModel(
-                UUID.fromString(userId.asString()),
-                username.asString(),
-                password.asString(),
-                createdAt,
-                null
-        );
-    }
-
-    private TaskJpaModel buildTask(TaskEntity task, UUID userId) {
-        var taskId = task.getId();
-        var taskName = task.getTaskName();
-        var finished = task.getFinished();
-        var createdAt = task.getCreatedAt();
-
-        return new TaskJpaModel(
-                UUID.fromString(taskId.asString()),
-                userId,
-                taskName.asString(),
-                finished,
-                createdAt,
-                null
-        );
-    }
-
     @Test
     @DisplayName("Should save a task and return it with populated timestamps")
     void shouldSaveTask() {
@@ -201,5 +170,36 @@ class TaskJpaDaoTest {
         var all = taskJpaDao.findAll();
 
         assertThat(all).hasSizeGreaterThanOrEqualTo(1);
+    }
+
+    private UserJpaModel buildUser(UserEntity user) {
+        var userId = user.getId();
+        var username = user.getUsername();
+        var password = user.getPassword();
+        var createdAt = user.getCreatedAt();
+
+        return new UserJpaModel(
+                UUID.fromString(userId.asString()),
+                username.asString(),
+                password.asString(),
+                createdAt,
+                null
+        );
+    }
+
+    private TaskJpaModel buildTask(TaskEntity task, UUID userId) {
+        var taskId = task.getId();
+        var taskName = task.getTaskName();
+        var finished = task.getFinished();
+        var createdAt = task.getCreatedAt();
+
+        return new TaskJpaModel(
+                UUID.fromString(taskId.asString()),
+                userId,
+                taskName.asString(),
+                finished,
+                createdAt,
+                null
+        );
     }
 }
