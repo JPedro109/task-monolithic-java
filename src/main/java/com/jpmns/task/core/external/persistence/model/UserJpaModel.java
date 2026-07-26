@@ -30,7 +30,7 @@ public class UserJpaModel {
     private Instant createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = true)
     private Instant updatedAt;
 
     public UserJpaModel() { }
@@ -51,16 +51,8 @@ public class UserJpaModel {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Instant getCreatedAt() {
@@ -69,5 +61,13 @@ public class UserJpaModel {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

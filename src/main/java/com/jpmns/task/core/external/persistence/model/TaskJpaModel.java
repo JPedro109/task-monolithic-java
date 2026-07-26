@@ -33,7 +33,7 @@ public class TaskJpaModel {
     private Instant createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = true)
     private Instant updatedAt;
 
     public TaskJpaModel() { }
@@ -59,16 +59,8 @@ public class TaskJpaModel {
         return taskName;
     }
 
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
-    }
-
     public boolean isFinished() {
         return finished;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
     }
 
     public Instant getCreatedAt() {
@@ -77,5 +69,13 @@ public class TaskJpaModel {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }
