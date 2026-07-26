@@ -4,14 +4,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.jpmns.task.core.domain.user.valueobject.UserPasswordValueObject;
 
 class UserPasswordValueObjectTest {
 
     @Test
-    @DisplayName("Should create a valid UserPasswordValueObject")
-    void shouldCreateValidPassword() {
+    @DisplayName("Should create a valid UserPasswordValueObject with exactly 8 characters")
+    void shouldCreateValidPasswordWithMinLength() {
+        var password = "12345678";
+
+        var result = UserPasswordValueObject.of(password);
+
+        assertThat(result.isFail()).isFalse();
+        assertThat(result.getValue().asString()).isEqualTo(password);
+    }
+
+    @Test
+    @DisplayName("Should create a valid UserPasswordValueObject with more than 8 characters")
+    void shouldCreateValidPasswordWithMoreThanMinLength() {
         var password = "raw-password";
 
         var result = UserPasswordValueObject.of(password);
@@ -35,6 +48,15 @@ class UserPasswordValueObjectTest {
     @DisplayName("Should fail when password is null")
     void shouldFailWhenPasswordIsNull() {
         var result = UserPasswordValueObject.of(null);
+
+        assertThat(result.isFail()).isTrue();
+    }
+
+    @ParameterizedTest
+    @DisplayName("Should fail when password has fewer than 8 characters")
+    @ValueSource(strings = {"", "1", "1234567"})
+    void shouldFailWhenPasswordIsTooShort(String password) {
+        var result = UserPasswordValueObject.of(password);
 
         assertThat(result.isFail()).isTrue();
     }

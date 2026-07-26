@@ -11,8 +11,10 @@ public class UserPasswordValueObject {
         this.password = password;
     }
 
+    private static final int MIN_LENGTH = 8;
+
     public static Result<UserPasswordValueObject> of(String password) {
-        if (password == null) {
+        if (password == null || password.length() < MIN_LENGTH) {
             return Result.fail(new InvalidPasswordException());
         }
 

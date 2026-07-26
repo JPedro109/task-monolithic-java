@@ -73,6 +73,17 @@ class UserEntityTest {
     }
 
     @Test
+    @DisplayName("Should throw when password has fewer than 8 characters")
+    void shouldThrowWhenPasswordIsTooShort() {
+        var id = UUID.randomUUID().toString();
+        var username = "username";
+        var shortPassword = "1234567";
+
+        assertThatThrownBy(() -> new UserEntity(id, username, shortPassword))
+                .isInstanceOf(DomainException.class);
+    }
+
+    @Test
     @DisplayName("Should throw with two errors when both username and password are invalid")
     void shouldThrowWhenBothFieldsAreInvalid() {
         var id = UUID.randomUUID().toString();
@@ -140,6 +151,16 @@ class UserEntityTest {
         String nullPassword = null;
 
         assertThatThrownBy(() -> user.updatePassword(nullPassword))
+                .isInstanceOf(DomainException.class);
+    }
+
+    @Test
+    @DisplayName("Should throw when updating with a password shorter than 8 characters")
+    void shouldThrowWhenUpdatingWithTooShortPassword() {
+        var user = UserFixture.aUser();
+        var shortPassword = "1234567";
+
+        assertThatThrownBy(() -> user.updatePassword(shortPassword))
                 .isInstanceOf(DomainException.class);
     }
 }
