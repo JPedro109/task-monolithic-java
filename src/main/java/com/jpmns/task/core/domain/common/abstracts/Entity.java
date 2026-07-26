@@ -13,11 +13,7 @@ public abstract class Entity {
     private final Instant createdAt;
 
     public Entity(String id, Instant createdAt) {
-        var idResult = IdValueObject.of(id);
-        validateOrThrow(List.of(idResult));
-
-        this.id = idResult.getValue();
-
+        this.id = IdValueObject.of(id).getValueOrThrow();
         this.createdAt = createdAt != null ? createdAt : Instant.now();
     }
 

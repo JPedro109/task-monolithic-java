@@ -22,7 +22,6 @@ import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.implementation.UserLoginUseCaseImpl;
-import com.jpmns.task.core.domain.user.valueobject.UsernameValueObject;
 import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,14 +65,14 @@ class UserLoginUseCaseTest {
     @Test
     @DisplayName("Should throw when user is not found")
     void shouldThrowWhenUserNotFound() {
-        var unknownUser = "unknown";
-        var password = "password";
-        var username = UsernameValueObject.of(unknownUser).getValue();
+        var user = UserFixture.aUser();
+        var username = user.getUsername();
+        var password = user.getPassword();
+
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> useCase.execute(new UserLoginInputDTO(username.asString(), password)))
+        assertThatThrownBy(() -> useCase.execute(new UserLoginInputDTO(username.asString(), password.asString())))
                 .isInstanceOf(InvalidCredentialsException.class);
-
         verify(tokenProvider, never()).generateAccessToken(any());
     }
 
@@ -90,7 +89,6 @@ class UserLoginUseCaseTest {
 
         assertThatThrownBy(() -> useCase.execute(new UserLoginInputDTO(username.asString(), wrongPassword)))
                 .isInstanceOf(InvalidCredentialsException.class);
-
         verify(tokenProvider, never()).generateAccessToken(any());
     }
 }

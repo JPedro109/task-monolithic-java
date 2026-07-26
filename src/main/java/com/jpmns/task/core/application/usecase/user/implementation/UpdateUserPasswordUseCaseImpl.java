@@ -24,6 +24,7 @@ public class UpdateUserPasswordUseCaseImpl implements UpdateUserPasswordUseCase 
     @Override
     public void execute(UpdateUserPasswordInputDTO input) {
         var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
+
         var user = userRepository.findById(userIdValue).orElseThrow(UserNotFoundException::new);
 
         var passwordIsValid = passwordEncoder.matches(input.currentPassword(), user.getPassword().asString());
@@ -33,6 +34,7 @@ public class UpdateUserPasswordUseCaseImpl implements UpdateUserPasswordUseCase 
 
         var encodedNewPassword = passwordEncoder.encode(input.newPassword());
         user.updatePassword(encodedNewPassword);
+
         userRepository.save(user);
     }
 }

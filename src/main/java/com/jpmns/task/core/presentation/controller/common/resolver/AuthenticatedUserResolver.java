@@ -4,6 +4,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class AuthenticatedUserResolver {
 
+    private AuthenticatedUserResolver() { }
+
     public static String getUserId() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {

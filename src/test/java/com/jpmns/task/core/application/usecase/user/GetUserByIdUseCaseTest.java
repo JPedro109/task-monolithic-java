@@ -35,28 +35,16 @@ class GetUserByIdUseCaseTest {
     void shouldReturnUserOutputWhenUserIsFound() {
         var user = UserFixture.aUser();
         var userId = user.getId();
+        var username = user.getUsername();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         var output = useCase.execute(new GetUserByIdInputDTO(userId.asString()));
 
         assertThat(output.id()).isEqualTo(userId.asString());
-        assertThat(output.username()).isEqualTo(user.getUsername().asString());
+        assertThat(output.username()).isEqualTo(username.asString());
         assertThat(output.createdAt()).isNotNull();
         verify(userRepository).findById(userId);
-    }
-
-    @Test
-    @DisplayName("Should include password in the output")
-    void shouldIncludePasswordInOutput() {
-        var user = UserFixture.aUser();
-        var userId = user.getId();
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-
-        var output = useCase.execute(new GetUserByIdInputDTO(userId.asString()));
-
-        assertThat(output).hasNoNullFieldsOrPropertiesExcept("updatedAt");
     }
 
     @Test

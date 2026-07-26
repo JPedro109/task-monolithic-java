@@ -24,6 +24,7 @@ public class UpdateUsernameUseCaseImpl implements UpdateUsernameUseCase {
         var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 
         var user = userRepository.findById(userIdValue).orElseThrow(UserNotFoundException::new);
+
         user.updateUsername(input.newUsername());
 
         if (userRepository.existsByUsername(user.getUsername())) {

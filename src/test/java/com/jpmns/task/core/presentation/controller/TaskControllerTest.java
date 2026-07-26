@@ -70,21 +70,6 @@ class TaskControllerTest {
     @MockitoBean
     private GetUserByIdUseCase getUserByIdUseCase;
 
-    private TaskOutputDTO buildTaskOutput(TaskEntity task) {
-        var taskId = task.getId();
-        var taskName = task.getTaskName();
-        var finished = task.getFinished();
-        var userId = task.getUserId();
-
-        return new TaskOutputDTO(
-                taskId.asString(),
-                userId.asString(),
-                taskName.asString(),
-                finished,
-                Instant.now()
-        );
-    }
-
     @Nested
     @DisplayName("POST /api/v1/tasks")
     class CreateTask {
@@ -401,5 +386,21 @@ class TaskControllerTest {
         private ResultActions perform(String taskId) throws Exception {
             return mockMvc.perform(patch("/api/v1/tasks/{taskId}/finish", taskId));
         }
+    }
+
+    private TaskOutputDTO buildTaskOutput(TaskEntity task) {
+        var taskId = task.getId();
+        var userId = task.getUserId();
+        var taskName = task.getTaskName();
+        var finished = task.getFinished();
+        var createdAt = task.getCreatedAt();
+
+        return new TaskOutputDTO(
+                taskId.asString(),
+                userId.asString(),
+                taskName.asString(),
+                finished,
+                createdAt
+        );
     }
 }

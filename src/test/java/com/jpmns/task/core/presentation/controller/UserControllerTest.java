@@ -195,6 +195,7 @@ class UserControllerTest {
 
         @Test
         @DisplayName("Should return 401 when current password is wrong")
+        @WithJwtTokenMock
         void shouldReturn401WhenCurrentPasswordIsWrong() throws Exception {
             var wrongOldPassword = "wrong-pass";
             var newPassword = "new-password";
