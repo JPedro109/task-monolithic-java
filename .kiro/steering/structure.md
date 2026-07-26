@@ -69,8 +69,7 @@ src/main/java/com/jpmns/task/
 ## Regras de arquitetura (Clean Architecture)
 
 - O **Domínio** não possui nenhuma dependência de Spring/JPA. Entidades e value objects são Java puro.
-- **Value objects** são criados via factory estática `of(...)` que retorna `Result<VO, DomainException>`. O construtor é sempre `private`; nunca instancie diretamente fora da própria classe.
-- **Value objects** expõem o valor primitivo via método `asString()`. Não há getter genérico `getValue()` no value object em si.
+- **Value objects** são criados via factory estática `of(...)` que retorna `Result<VO>`. O construtor é sempre `private`; nunca instancie diretamente fora da própria classe.
 - **Casos de uso** são definidos como interfaces em `usecase/.../interfaces/` e implementados em `usecase/.../implementation/`. Controllers dependem apenas da interface.
 - **Port interfaces** (`TaskRepository`, `Token`, `PasswordEncoder`) ficam em `application/port/` e são implementadas por adaptadores em `external/`. As camadas de domínio e aplicação nunca importam de `external/`.
 - **Mappers** são classes utilitárias estáticas sem estado. Possuem construtor `private` e métodos `toModel()` (domínio → JPA) e `toDomain()` (JPA → domínio). Nunca adicionam lógica de negócio.
@@ -81,7 +80,7 @@ src/main/java/com/jpmns/task/
 - **Response payloads** (`presentation/controller/payload/.../response/`) são records que implementam a interface `*ResponseDoc` correspondente e expõem uma factory estática `of(OutputDTO)` para conversão a partir do output do use case.
 - **Controllers** implementam a interface `*ControllerDoc` que concentra todas as anotações Swagger, mantendo a classe do controller limpa. Dependem exclusivamente das interfaces de casos de uso.
 - **`AuthenticatedUserResolver`** é o único ponto de extração do ID do usuário autenticado a partir do `SecurityContext`.
-- **Toda exceção originada em infraestrutura externa** (bibliotecas de terceiros, JPA, JWT, etc.) deve ser capturada no adaptador correspondente e relançada como uma exceção do domínio/aplicação (ex: qualquer exceção da biblioteca JJWT é convertida para `InvalidTokenException`). As camadas de domínio e aplicação nunca devem depender de exceções de frameworks externos.
+- **Toda exceção originada em infraestrutura externa** (bibliotecas de terceiros, JPA, JWT, etc.) que seja relevante para a regra de negócio deve ser capturada no adaptador correspondente e relançada como uma exceção de domínio/aplicação. Por exemplo, qualquer exceção da biblioteca JJWT que indique um token inválido deve ser convertida para InvalidTokenException. Dessa forma, as camadas de domínio e aplicação nunca dependem diretamente de exceções de frameworks ou bibliotecas externas. Se a exceção da infraestrutura não influencia a regra de negócio e apenas representa uma falha técnica inesperada, ela não precisa ser convertida para uma exceção de domínio. Nesses casos, a exceção pode ser propagada para o tratamento global de erros, sendo considerada um erro inesperado..
 - **`GlobalExceptionHandler`** é o único ponto de mapeamento de exceções de domínio/aplicação para respostas HTTP. Nenhum controller trata exceções diretamente.
 
 ## Convenções principais
@@ -236,12 +235,7 @@ public abstract class Entity {
     private final Instant createdAt;
 
     public Entity(String id, Instant createdAt) {
-        var idResult = IdValueObject.of(id);
-
-        List<Result<?>> results = List.of(idResult);
-        validateOrThrow(results);
-
-        this.id = idResult.getValue();
+        this.id = IdValueObject.of(id).getValueOrThrow();
         this.createdAt = createdAt != null ? createdAt : Instant.now();
     }
 }
@@ -271,9 +265,13 @@ public class TaskEntity extends Entity {
     public TaskEntity(String id, String userId, String taskName,
                       Boolean finished, Instant createdAt, Instant updatedAt) {
         super(id, createdAt);
+
         var userIdResult = IdValueObject.of(userId);
         var taskNameResult = TaskNameValueObject.of(taskName);
-        validateOrThrow(List.of(userIdResult, taskNameResult));
+
+        var results = List.of(userIdResult, taskNameResult);
+        validateOrThrow(results);
+
         this.userId = userIdResult.getValue();
         this.taskName = taskNameResult.getValue();
         this.finished = finished;
@@ -298,8 +296,8 @@ Cada value object segue este contrato:
 
 - Construtor `private` — instanciação exclusiva via `of(...)`.
 - Factory estática `of(String value)` retorna `Result<VO>`: `Result.fail(new InvalidXxxException())` quando inválido, `Result.success(new XxxValueObject(value))` quando válido.
-- Método `asString()` expõe o valor primitivo. Nunca use `getValue()`.
-- Sobrescrevem `equals` e `hashCode` com base em `asString()`.
+- O valor primitivo é exposto por um método de conversão correspondente ao seu tipo, como `asString()`, `asInt()`, `asLong()`, etc. Nunca use getValue().
+- Sobrescrevem `equals` e `hashCode` com base no valor retornado pelo método de conversão correspondente (`asString()`, `asInt()`, `asLong()`, etc.).
 - Regras de validação ficam dentro do `of(...)` — `null`, formato, tamanho, padrão de regex, etc.
 
 ```java
@@ -322,12 +320,6 @@ public class UsernameValueObject {
     public String asString() { return username; }
 }
 ```
-
-Value objects de domínio existentes:
-- `IdValueObject` — UUID no formato padrão (`common/valueobject/`)
-- `TaskNameValueObject` — não nulo, não vazio, máximo 255 caracteres
-- `UsernameValueObject` — alfanumérico + underscore, 3–50 caracteres
-- `UserPasswordValueObject` — não nulo (a senha já chega codificada do adapter)
 
 ### `DomainException`
 
@@ -524,7 +516,7 @@ private TaskOutputDTO toOutput(TaskEntity task) {
 
 ## Convenções da camada external
 
-A camada `external` é o único lugar onde infraestrutura pode existir. Toda integração com tecnologia externa — banco de dados, biblioteca de JWT, encoder de senha, cliente HTTP, fila de mensagens, etc. — deve ser implementada aqui como um adaptador.
+A camada `external` é o único lugar onde infraestrutura pode existir. Toda integração com tecnologia externa — banco de dados, biblioteca de JWT, encoder de senha, fila de mensagens, etc. — deve ser implementada aqui como um adaptador.
 
 **Exceção — camada de apresentação (HTTP, GraphQL, CLI, scheduler)**: mecanismos de entrada da aplicação não são infraestrutura de suporte e por isso **não** pertencem a `external`. Tudo que representa uma forma de acesso à aplicação — controllers HTTP, resolvers GraphQL, comandos CLI, schedulers — pertence à camada `presentation`. Veja as convenções correspondentes em [Convenções da camada presentation](#convenções-da-camada-presentation).
 
@@ -596,12 +588,11 @@ public class TaskJpaModel {
     public UUID getUserId() { return userId; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    public String getTaskName() { return taskName; }
+    public boolean isFinished() { return finished; }
 
     // setters apenas para campos mutáveis
-    public String getTaskName() { return taskName; }
     public void setTaskName(String taskName) { this.taskName = taskName; }
-
-    public boolean isFinished() { return finished; }
     public void setFinished(boolean finished) { this.finished = finished; }
 }
 ```
@@ -624,7 +615,6 @@ public interface TaskJpaDao extends JpaRepository<TaskJpaModel, UUID> {
 - Anotados com `@Repository`, implementam a interface de porta correspondente (`TaskRepository`, `UserRepository`).
 - Recebem o DAO Spring Data JPA (`*JpaDao`) via construtor.
 - Toda operação converte domínio → modelo com `Mapper.toModel(entity)` antes de persistir, e modelo → domínio com `Mapper.toDomain(model)` ao retornar.
-- **Nunca** propagam exceções do JPA para fora — se necessário, capturam e relançam como exceção de aplicação.
 
 ```java
 @Repository
@@ -741,31 +731,6 @@ public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody CreateTaskReq
 }
 ```
 
-### `GlobalExceptionHandler`
-
-- Anotado com `@RestControllerAdvice`.
-- Único ponto de mapeamento de exceções para respostas HTTP. Nenhum controller captura exceções.
-- Retorna `ProblemDetail` (Problem Details RFC 7807) via `ProblemDetail.forStatusAndDetail(status, message)`.
-- Mapeamentos obrigatórios:
-  - `MethodArgumentNotValidException` → `400` (agrega mensagens dos `FieldError`s)
-  - `HttpMessageNotReadableException` → `400`
-  - `DomainException` → `422`
-  - `*NotFoundException` → `404`
-  - `UsernameAlreadyExistsException` → `409`
-  - `InvalidCredentialsException`, `InvalidTokenException` → `401`
-  - `*AccessDeniedException` → `403`
-  - `Exception` (genérico) → `500` com mensagem `"Internal server error"` (nunca exponha detalhes de exceções genéricas)
-- Todo handler loga em nível `ERROR` com `LOGGER.error("...: {}", ex.getMessage(), ex)`.
-
-### `AuthenticatedUserResolver`
-
-Classe utilitária estática (sem instância) que lê o `principal` do `SecurityContext`:
-
-- `getUserId()` — lança `IllegalArgumentException` se não autenticado. Use em todos os endpoints protegidos.
-- `getUserIdOrNull()` — retorna `null` se não autenticado. Use apenas em endpoints opcionalmente autenticados.
-
-O principal no `SecurityContext` é sempre uma `String` com o UUID do usuário, populada pelo `JwtAuthenticationFilter`.
-
 ### `.toString()` customizado para dados sensíveis
 
 Todo record de request ou response que contenha campos sensíveis (senha, token) **deve** sobrescrever `toString()` substituindo o valor por `'[PROTECTED]'`. Essa proteção garante que logs de entrada e saída dos controllers nunca exponham dados confidenciais.
@@ -785,6 +750,22 @@ public String toString() {
 ```
 
 Campos considerados sensíveis: senhas (`password`, `currentPassword`, `newPassword`), tokens (`accessToken`, `refreshToken`) e qualquer credencial ou segredo.
+
+### `GlobalExceptionHandler`
+
+- Anotado com `@RestControllerAdvice`.
+- Único ponto de mapeamento de exceções para respostas HTTP. Nenhum controller captura exceções.
+- Retorna `ProblemDetail` (Problem Details RFC 7807) via `ProblemDetail.forStatusAndDetail(status, message)`.
+- Todo handler loga em nível `ERROR` com `LOGGER.error("...: {}", ex.getMessage(), ex)`.
+
+### `AuthenticatedUserResolver`
+
+Classe utilitária estática (sem instância) que lê o `principal` do `SecurityContext`:
+
+- `getUserId()` — lança `IllegalArgumentException` se não autenticado. Use em todos os endpoints protegidos.
+- `getUserIdOrNull()` — retorna `null` se não autenticado. Use apenas em endpoints opcionalmente autenticados.
+
+O principal no `SecurityContext` é sempre uma `String` com o UUID do usuário, populada pelo `JwtAuthenticationFilter`.
 
 ## Convenções de documentação (Swagger / OpenAPI)
 
@@ -1069,6 +1050,7 @@ class CreateUserUseCaseTest {
         var password = user.getPassword();
         var input = new CreateUserInputDTO(username.asString(), password.asString());
         var savedUser = UserFixture.aUser();
+
         when(userRepository.existsByUsername(username)).thenReturn(false);
         when(passwordEncoder.encode(password.asString())).thenReturn(password.asString());
         when(userRepository.save(any())).thenReturn(savedUser);
@@ -1087,6 +1069,7 @@ class CreateUserUseCaseTest {
         var username = user.getUsername();
         var password = user.getPassword();
         var input = new CreateUserInputDTO(username.asString(), password.asString());
+
         when(userRepository.existsByUsername(username)).thenReturn(true);
         when(passwordEncoder.encode(password.asString())).thenReturn(password.asString());
 
@@ -1133,6 +1116,7 @@ class AuthControllerTest {
             var accessToken = "access-token";
             var refreshToken = "refresh-token";
             var output = new UserLoginOutputDTO(accessToken, refreshToken);
+
             when(userLoginUseCase.execute(any())).thenReturn(output);
 
             perform(username.asString(), password.asString())
@@ -1147,6 +1131,7 @@ class AuthControllerTest {
             var user = UserFixture.aUser();
             var username = user.getUsername();
             var wrongPassword = "wrong-password";
+
             when(userLoginUseCase.execute(any())).thenThrow(new InvalidCredentialsException());
 
             perform(username.asString(), wrongPassword)
@@ -1173,7 +1158,7 @@ Cobrem os três componentes da camada `external/persistence/`: DAOs, mappers e r
 #### Testes de DAO (`@DataJpaTest`)
 
 - Usam `@DataJpaTest` — sobe apenas o slice JPA, sem contexto Spring completo.
-- Podem usar H2 em memória (`testImplementation("com.h2database:h2")`): o objetivo é verificar queries e mapeamentos JPA de forma rápida e isolada, sem Testcontainers.
+- Usam H2 em memória (`testImplementation("com.h2database:h2")`): o objetivo é verificar queries e mapeamentos JPA de forma rápida e isolada, sem Testcontainers.
 - Dependências (`*JpaDao`) são injetadas com `@Autowired`.
 - Constantes para IDs desconhecidos ficam como `private static final UUID` na classe de teste — nunca crie UUIDs aleatórios inline.
 - Use `@BeforeEach` para popular dados de pré-requisito (ex: salvar um `UserJpaModel` antes de testar `TaskJpaDao`).
@@ -1336,19 +1321,19 @@ class TaskIntegrationTest extends IntegrationTestBase {
         }
 
         @Test
-        @DisplayName("Should return 401 when no token is provided")
-        void shouldReturn401WhenNoToken() throws Exception {
-            perform("My first task")
-                    .andExpect(status().isUnauthorized());
-        }
-
-        @Test
         @DisplayName("Should return 400 when taskName is blank")
         @SqlCreateSeed
         @WithJwtTokenMock
         void shouldReturn400WhenTaskNameIsBlank() throws Exception {
             perform("")
                     .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 401 when no token is provided")
+        void shouldReturn401WhenNoToken() throws Exception {
+            perform("My first task")
+                    .andExpect(status().isUnauthorized());
         }
 
         private ResultActions perform(String taskName) throws Exception {
