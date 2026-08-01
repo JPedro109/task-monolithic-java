@@ -5,13 +5,13 @@ import com.jpmns.task.shared.type.Result;
 
 public class UserPasswordValueObject {
 
+    private static final int MIN_LENGTH = 8;
+
     private final String password;
 
     private UserPasswordValueObject(String password) {
         this.password = password;
     }
-
-    private static final int MIN_LENGTH = 8;
 
     public static Result<UserPasswordValueObject> of(String password) {
         if (password == null || password.length() < MIN_LENGTH) {

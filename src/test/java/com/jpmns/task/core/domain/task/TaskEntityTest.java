@@ -3,8 +3,6 @@ package com.jpmns.task.core.domain.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +11,14 @@ import com.jpmns.task.shared.fixture.TaskFixture;
 
 class TaskEntityTest {
 
+    private static final String VALID_ID = "00000000-0000-0000-0000-000000000001";
+    private static final String VALID_USER_ID = "00000000-0000-0000-0000-000000000002";
+
     @Test
     @DisplayName("Should create a task with valid data")
     void shouldCreateTaskWithValidData() {
-        var id = UUID.randomUUID().toString();
-        var userId = UUID.randomUUID().toString();
+        var id = VALID_ID;
+        var userId = VALID_USER_ID;
         var taskName = "Buy groceries";
         var finished = false;
 
@@ -66,8 +67,8 @@ class TaskEntityTest {
     @Test
     @DisplayName("Should throw when task name is empty")
     void shouldThrowWhenTaskNameIsBlank() {
-        var id = UUID.randomUUID().toString();
-        var userId = UUID.randomUUID().toString();
+        var id = VALID_ID;
+        var userId = VALID_USER_ID;
         var finished = false;
         var emptyTaskName = "";
 
@@ -78,8 +79,8 @@ class TaskEntityTest {
     @Test
     @DisplayName("Should throw when task name is null")
     void shouldThrowWhenTaskNameIsNull() {
-        var id = UUID.randomUUID().toString();
-        var userId = UUID.randomUUID().toString();
+        var id = VALID_ID;
+        var userId = VALID_USER_ID;
         var finished = false;
         String nullTaskName = null;
 
@@ -90,8 +91,8 @@ class TaskEntityTest {
     @Test
     @DisplayName("Should throw when task name exceeds 255 characters")
     void shouldThrowWhenTaskNameExceedsMaxLength() {
-        var id = UUID.randomUUID().toString();
-        var userId = UUID.randomUUID().toString();
+        var id = VALID_ID;
+        var userId = VALID_USER_ID;
         var longName = "a".repeat(256);
         var finished = false;
 
@@ -102,7 +103,7 @@ class TaskEntityTest {
     @Test
     @DisplayName("Should throw when task id is not a valid UUID")
     void shouldThrowWhenIdIsNotUUID() {
-        var userId = UUID.randomUUID().toString();
+        var userId = VALID_USER_ID;
         var invalidTaskId = "not-a-uuid";
         var taskName = "Buy groceries";
         var finished = false;
@@ -118,7 +119,7 @@ class TaskEntityTest {
     @Test
     @DisplayName("Should throw when userId is not a valid UUID")
     void shouldThrowWhenUserIdIsNotUUID() {
-        var id = UUID.randomUUID().toString();
+        var id = VALID_ID;
         var taskName = "Buy groceries";
         var invalidUserId = "not-a-uuid";
         var finished = false;

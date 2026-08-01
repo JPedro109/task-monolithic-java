@@ -3,6 +3,8 @@ package com.jpmns.task.core.presentation.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -105,6 +107,8 @@ class UserControllerTest {
 
             perform(emptyUsername, password.asString())
                     .andExpect(status().isBadRequest());
+
+            verify(createUserUseCase, never()).execute(any());
         }
 
         @Test
@@ -116,6 +120,8 @@ class UserControllerTest {
 
             perform(shortUsername, password.asString())
                     .andExpect(status().isBadRequest());
+
+            verify(createUserUseCase, never()).execute(any());
         }
 
         @Test
@@ -127,6 +133,8 @@ class UserControllerTest {
 
             perform(username.asString(), shortPassword)
                     .andExpect(status().isBadRequest());
+
+            verify(createUserUseCase, never()).execute(any());
         }
 
         private ResultActions perform(String username, String password) throws Exception {
@@ -215,6 +223,8 @@ class UserControllerTest {
 
             perform(oldPassword, newPassword)
                     .andExpect(status().isBadRequest());
+
+            verify(updateUserPasswordUseCase, never()).execute(any());
         }
 
         @Test
@@ -280,6 +290,8 @@ class UserControllerTest {
 
             perform(shortNewUsername)
                     .andExpect(status().isBadRequest());
+
+            verify(updateUsernameUseCase, never()).execute(any());
         }
 
         @Test

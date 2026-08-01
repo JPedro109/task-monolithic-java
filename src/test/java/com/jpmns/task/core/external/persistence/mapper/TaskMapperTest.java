@@ -21,6 +21,7 @@ class TaskMapperTest {
         var taskId = task.getId();
         var taskName = task.getTaskName();
         var userId = task.getUserId();
+
         var model = TaskMapper.toModel(task);
 
         assertThat(model).isNotNull();

@@ -20,6 +20,7 @@ class UserMapperTest {
         var userId = user.getId();
         var username = user.getUsername();
         var password = user.getPassword();
+
         var model = UserMapper.toModel(user);
 
         assertThat(model).isNotNull();

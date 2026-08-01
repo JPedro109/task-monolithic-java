@@ -40,8 +40,8 @@ public class AuthController implements AuthControllerDoc {
         LOGGER.info("User login - request: {}", request);
 
         var dto = new UserLoginInputDTO(request.username(), request.password());
-
         var output = userLoginUseCase.execute(dto);
+
         var response = UserLoginResponse.of(output);
 
         LOGGER.info("User login - response: {}", response);

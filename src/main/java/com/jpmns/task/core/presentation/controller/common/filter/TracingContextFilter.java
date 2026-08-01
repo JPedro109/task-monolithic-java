@@ -52,7 +52,7 @@ public class TracingContextFilter extends OncePerRequestFilter {
         }
     }
 
-    private Boolean isApplicationRequest(HttpServletRequest request) {
+    private boolean isApplicationRequest(HttpServletRequest request) {
         var uri = getUri(request);
 
         return uri.contains("swagger") || uri.contains("docs");

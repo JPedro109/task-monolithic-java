@@ -1,6 +1,8 @@
 package com.jpmns.task.core.presentation.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -91,6 +93,8 @@ class AuthControllerTest {
 
             perform(emptyUsername, password.asString())
                     .andExpect(status().isBadRequest());
+
+            verify(userLoginUseCase, never()).execute(any());
         }
 
         @Test
@@ -102,6 +106,8 @@ class AuthControllerTest {
 
             perform(username.asString(), emptyPassword)
                     .andExpect(status().isBadRequest());
+
+            verify(userLoginUseCase, never()).execute(any());
         }
 
         private ResultActions perform(String username, String password) throws Exception {
@@ -152,6 +158,8 @@ class AuthControllerTest {
 
             perform(emptyToken)
                     .andExpect(status().isBadRequest());
+
+            verify(refreshUserTokenUseCase, never()).execute(any());
         }
 
         private ResultActions perform(String refreshToken) throws Exception {

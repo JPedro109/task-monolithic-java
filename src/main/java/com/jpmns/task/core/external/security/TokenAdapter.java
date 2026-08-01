@@ -55,7 +55,7 @@ public class TokenAdapter implements Token {
 
             return new DecodeTokenDto(claims.getSubject());
         } catch (Exception e) {
-            LOGGER.error("Invalid JWT token: {}", e.getMessage());
+            LOGGER.error("Invalid JWT token: {}", e.getMessage(), e);
             throw new InvalidTokenException();
         }
     }

@@ -3,8 +3,6 @@ package com.jpmns.task.core.domain.user;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +11,12 @@ import com.jpmns.task.shared.fixture.UserFixture;
 
 class UserEntityTest {
 
+    private static final String VALID_ID = "00000000-0000-0000-0000-000000000001";
+
     @Test
     @DisplayName("Should create a user with valid data")
     void shouldCreateUserWithValidData() {
-        var id = UUID.randomUUID().toString();
+        var id = VALID_ID;
         var username = "username";
         var password = "password";
 
@@ -53,7 +53,7 @@ class UserEntityTest {
     @Test
     @DisplayName("Should throw when username is too short")
     void shouldThrowWhenUsernameIsInvalid() {
-        var id = UUID.randomUUID().toString();
+        var id = VALID_ID;
         var username = "ab";
         var password = "password";
 
@@ -64,7 +64,7 @@ class UserEntityTest {
     @Test
     @DisplayName("Should throw when password is null")
     void shouldThrowWhenPasswordIsNull() {
-        var id = UUID.randomUUID().toString();
+        var id = VALID_ID;
         var username = "username";
         String password = null;
 
@@ -75,7 +75,7 @@ class UserEntityTest {
     @Test
     @DisplayName("Should throw when password has fewer than 8 characters")
     void shouldThrowWhenPasswordIsTooShort() {
-        var id = UUID.randomUUID().toString();
+        var id = VALID_ID;
         var username = "username";
         var shortPassword = "1234567";
 
@@ -86,7 +86,7 @@ class UserEntityTest {
     @Test
     @DisplayName("Should throw with two errors when both username and password are invalid")
     void shouldThrowWhenBothFieldsAreInvalid() {
-        var id = UUID.randomUUID().toString();
+        var id = VALID_ID;
         var shortUsername = "ab";
         String nullPassword = null;
 

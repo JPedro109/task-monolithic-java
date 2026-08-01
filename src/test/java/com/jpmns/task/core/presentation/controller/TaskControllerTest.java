@@ -3,6 +3,8 @@ package com.jpmns.task.core.presentation.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -113,6 +115,8 @@ class TaskControllerTest {
 
             perform(emptyTaskName)
                     .andExpect(status().isBadRequest());
+
+            verify(createTaskUseCase, never()).execute(any());
         }
 
         @Test
@@ -123,6 +127,8 @@ class TaskControllerTest {
 
             perform(largeTaskName)
                     .andExpect(status().isBadRequest());
+
+            verify(createTaskUseCase, never()).execute(any());
         }
 
         private ResultActions perform(String taskName) throws Exception {
@@ -248,6 +254,8 @@ class TaskControllerTest {
 
             perform(taskId.asString(), emptyTaskName)
                     .andExpect(status().isBadRequest());
+
+            verify(updateTaskUseCase, never()).execute(any());
         }
 
         @Test
