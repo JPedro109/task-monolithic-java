@@ -1,3 +1,7 @@
+---
+inclusion: always
+---
+
 # Task Service
 
 Uma API RESTful para gerenciamento pessoal de tarefas, construída com Java 21 e Spring Boot 4, seguindo os princípios da Clean Architecture.
