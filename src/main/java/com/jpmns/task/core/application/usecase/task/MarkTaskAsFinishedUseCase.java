@@ -1,25 +1,23 @@
-package com.jpmns.task.core.application.usecase.task.implementation;
+package com.jpmns.task.core.application.usecase.task;
 
 import org.springframework.stereotype.Service;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
-import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDTO;
+import com.jpmns.task.core.application.usecase.task.dto.input.MarkTaskAsFinishedInputDTO;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
-import com.jpmns.task.core.application.usecase.task.interfaces.DeleteTaskUseCase;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
 
 @Service
-public class DeleteTaskUseCaseImpl implements DeleteTaskUseCase {
+public class MarkTaskAsFinishedUseCase {
 
     private final TaskRepository taskRepository;
 
-    public DeleteTaskUseCaseImpl(TaskRepository taskRepository) {
+    public MarkTaskAsFinishedUseCase(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    @Override
-    public void execute(DeleteTaskInputDTO input) {
+    public void execute(MarkTaskAsFinishedInputDTO input) {
         var taskIdValue = IdValueObject.of(input.taskId()).getValueOrThrow();
 
         var task = taskRepository.findById(taskIdValue).orElseThrow(TaskNotFoundException::new);
@@ -29,6 +27,7 @@ public class DeleteTaskUseCaseImpl implements DeleteTaskUseCase {
             throw new TaskAccessDeniedException();
         }
 
-        taskRepository.deleteById(taskIdValue);
+        task.markAsFinished();
+        taskRepository.save(task);
     }
 }

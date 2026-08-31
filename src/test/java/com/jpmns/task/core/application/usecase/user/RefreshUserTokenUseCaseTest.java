@@ -21,7 +21,6 @@ import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.port.security.dto.DecodeTokenDto;
 import com.jpmns.task.core.application.usecase.user.dto.input.RefreshUserTokenInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
-import com.jpmns.task.core.application.usecase.user.implementation.RefreshUserTokenUseCaseImpl;
 import com.jpmns.task.core.domain.common.valueobject.exception.InvalidIdValueObjectException;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -37,7 +36,7 @@ class RefreshUserTokenUseCaseTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private RefreshUserTokenUseCaseImpl useCase;
+    private RefreshUserTokenUseCase useCase;
 
     @Test
     @DisplayName("Should refresh tokens successfully when refresh token is valid")

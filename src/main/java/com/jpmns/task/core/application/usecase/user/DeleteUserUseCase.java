@@ -1,23 +1,21 @@
-package com.jpmns.task.core.application.usecase.user.implementation;
+package com.jpmns.task.core.application.usecase.user;
 
 import org.springframework.stereotype.Service;
 
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.usecase.user.dto.input.DeleteUserInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
-import com.jpmns.task.core.application.usecase.user.interfaces.DeleteUserUseCase;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
 
 @Service
-public class DeleteUserUseCaseImpl implements DeleteUserUseCase {
+public class DeleteUserUseCase {
 
     private final UserRepository userRepository;
 
-    public DeleteUserUseCaseImpl(UserRepository userRepository) {
+    public DeleteUserUseCase(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @Override
     public void execute(DeleteUserInputDTO input) {
         var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 

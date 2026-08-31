@@ -18,7 +18,6 @@ import com.jpmns.task.core.application.port.persistence.repository.UserRepositor
 import com.jpmns.task.core.application.port.security.PasswordEncoder;
 import com.jpmns.task.core.application.usecase.user.dto.input.CreateUserInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
-import com.jpmns.task.core.application.usecase.user.implementation.CreateUserUseCaseImpl;
 import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +30,7 @@ class CreateUserUseCaseTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private CreateUserUseCaseImpl useCase;
+    private CreateUserUseCase useCase;
 
     @Test
     @DisplayName("Should create a user successfully")

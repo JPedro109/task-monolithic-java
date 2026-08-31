@@ -1,4 +1,4 @@
-package com.jpmns.task.core.application.usecase.user.implementation;
+package com.jpmns.task.core.application.usecase.user;
 
 import java.util.UUID;
 
@@ -9,21 +9,19 @@ import com.jpmns.task.core.application.port.security.PasswordEncoder;
 import com.jpmns.task.core.application.usecase.user.dto.input.CreateUserInputDTO;
 import com.jpmns.task.core.application.usecase.user.dto.output.CreateUserOutputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
-import com.jpmns.task.core.application.usecase.user.interfaces.CreateUserUseCase;
 import com.jpmns.task.core.domain.user.UserEntity;
 
 @Service
-public class CreateUserUseCaseImpl implements CreateUserUseCase {
+public class CreateUserUseCase {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public CreateUserUseCaseImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public CreateUserUseCase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
     public CreateUserOutputDTO execute(CreateUserInputDTO input) {
         var encodedPassword = passwordEncoder.encode(input.password());
         var user = new UserEntity(UUID.randomUUID().toString(), input.username(), encodedPassword);

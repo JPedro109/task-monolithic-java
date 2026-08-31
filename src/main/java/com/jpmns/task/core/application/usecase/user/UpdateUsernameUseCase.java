@@ -1,4 +1,4 @@
-package com.jpmns.task.core.application.usecase.user.implementation;
+package com.jpmns.task.core.application.usecase.user;
 
 import org.springframework.stereotype.Service;
 
@@ -7,19 +7,17 @@ import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUsernameInpu
 import com.jpmns.task.core.application.usecase.user.dto.output.UpdateUsernameOutputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
-import com.jpmns.task.core.application.usecase.user.interfaces.UpdateUsernameUseCase;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
 
 @Service
-public class UpdateUsernameUseCaseImpl implements UpdateUsernameUseCase {
+public class UpdateUsernameUseCase {
 
     private final UserRepository userRepository;
 
-    public UpdateUsernameUseCaseImpl(UserRepository userRepository) {
+    public UpdateUsernameUseCase(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @Override
     public UpdateUsernameOutputDTO execute(UpdateUsernameInputDTO input) {
         var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 

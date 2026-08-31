@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
 import com.jpmns.task.core.application.usecase.task.dto.input.CreateTaskInputDTO;
-import com.jpmns.task.core.application.usecase.task.implementation.CreateTaskUseCaseImpl;
 import com.jpmns.task.core.domain.common.exception.DomainException;
 import com.jpmns.task.shared.fixture.TaskFixture;
 
@@ -27,7 +26,7 @@ class CreateTaskUseCaseTest {
     private TaskRepository taskRepository;
 
     @InjectMocks
-    private CreateTaskUseCaseImpl useCase;
+    private CreateTaskUseCase useCase;
 
     @Test
     @DisplayName("Should create a task successfully")

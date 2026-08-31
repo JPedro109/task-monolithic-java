@@ -1,4 +1,4 @@
-package com.jpmns.task.core.application.usecase.user.implementation;
+package com.jpmns.task.core.application.usecase.user;
 
 import org.springframework.stereotype.Service;
 
@@ -8,25 +8,23 @@ import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDTO;
 import com.jpmns.task.core.application.usecase.user.dto.output.UserLoginOutputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
-import com.jpmns.task.core.application.usecase.user.interfaces.UserLoginUseCase;
 import com.jpmns.task.core.domain.user.valueobject.UsernameValueObject;
 
 @Service
-public class UserLoginUseCaseImpl implements UserLoginUseCase {
+public class UserLoginUseCase {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final Token token;
 
-    public UserLoginUseCaseImpl(UserRepository userRepository,
-                                PasswordEncoder passwordEncoder,
-                                Token tokenProvider) {
+    public UserLoginUseCase(UserRepository userRepository,
+                            PasswordEncoder passwordEncoder,
+                            Token tokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.token = tokenProvider;
     }
 
-    @Override
     public UserLoginOutputDTO execute(UserLoginInputDTO input) {
         var usernameValue = UsernameValueObject.of(input.username()).getValueOrThrow();
 

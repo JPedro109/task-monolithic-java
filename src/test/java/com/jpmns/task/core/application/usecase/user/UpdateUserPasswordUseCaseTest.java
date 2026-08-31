@@ -21,7 +21,6 @@ import com.jpmns.task.core.application.port.security.PasswordEncoder;
 import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUserPasswordInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
-import com.jpmns.task.core.application.usecase.user.implementation.UpdateUserPasswordUseCaseImpl;
 import com.jpmns.task.core.domain.common.exception.DomainException;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -37,7 +36,7 @@ class UpdateUserPasswordUseCaseTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UpdateUserPasswordUseCaseImpl useCase;
+    private UpdateUserPasswordUseCase useCase;
 
     @Test
     @DisplayName("Should update password successfully when current password matches")

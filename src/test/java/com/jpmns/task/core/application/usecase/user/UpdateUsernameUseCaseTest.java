@@ -20,7 +20,6 @@ import com.jpmns.task.core.application.port.persistence.repository.UserRepositor
 import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUsernameInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
 import com.jpmns.task.core.application.usecase.user.exception.UsernameAlreadyExistsException;
-import com.jpmns.task.core.application.usecase.user.implementation.UpdateUsernameUseCaseImpl;
 import com.jpmns.task.core.domain.common.exception.DomainException;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -33,7 +32,7 @@ class UpdateUsernameUseCaseTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private UpdateUsernameUseCaseImpl useCase;
+    private UpdateUsernameUseCase useCase;
 
     @Test
     @DisplayName("Should update username successfully")

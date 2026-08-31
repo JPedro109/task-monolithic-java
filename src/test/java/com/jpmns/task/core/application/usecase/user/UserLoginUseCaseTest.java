@@ -21,7 +21,6 @@ import com.jpmns.task.core.application.port.security.PasswordEncoder;
 import com.jpmns.task.core.application.port.security.Token;
 import com.jpmns.task.core.application.usecase.user.dto.input.UserLoginInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
-import com.jpmns.task.core.application.usecase.user.implementation.UserLoginUseCaseImpl;
 import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +39,7 @@ class UserLoginUseCaseTest {
     private Token tokenProvider;
 
     @InjectMocks
-    private UserLoginUseCaseImpl useCase;
+    private UserLoginUseCase useCase;
 
     @Test
     @DisplayName("Should login successfully and return access and refresh tokens")

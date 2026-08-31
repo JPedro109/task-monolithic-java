@@ -19,7 +19,6 @@ import com.jpmns.task.core.application.port.persistence.repository.TaskRepositor
 import com.jpmns.task.core.application.usecase.task.dto.input.DeleteTaskInputDTO;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
-import com.jpmns.task.core.application.usecase.task.implementation.DeleteTaskUseCaseImpl;
 import com.jpmns.task.shared.fixture.TaskFixture;
 import com.jpmns.task.shared.fixture.UserFixture;
 
@@ -30,7 +29,7 @@ class DeleteTaskUseCaseTest {
     private TaskRepository taskRepository;
 
     @InjectMocks
-    private DeleteTaskUseCaseImpl useCase;
+    private DeleteTaskUseCase useCase;
 
     @Test
     @DisplayName("Should delete a task successfully")

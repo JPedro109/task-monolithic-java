@@ -1,4 +1,4 @@
-package com.jpmns.task.core.application.usecase.user.implementation;
+package com.jpmns.task.core.application.usecase.user;
 
 import org.springframework.stereotype.Service;
 
@@ -7,21 +7,19 @@ import com.jpmns.task.core.application.port.security.PasswordEncoder;
 import com.jpmns.task.core.application.usecase.user.dto.input.UpdateUserPasswordInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.InvalidCredentialsException;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
-import com.jpmns.task.core.application.usecase.user.interfaces.UpdateUserPasswordUseCase;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
 
 @Service
-public class UpdateUserPasswordUseCaseImpl implements UpdateUserPasswordUseCase {
+public class UpdateUserPasswordUseCase {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UpdateUserPasswordUseCaseImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UpdateUserPasswordUseCase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
     public void execute(UpdateUserPasswordInputDTO input) {
         var userIdValue = IdValueObject.of(input.userId()).getValueOrThrow();
 

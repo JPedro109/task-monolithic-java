@@ -1,4 +1,4 @@
-package com.jpmns.task.core.application.usecase.task.implementation;
+package com.jpmns.task.core.application.usecase.task;
 
 import org.springframework.stereotype.Service;
 
@@ -7,20 +7,18 @@ import com.jpmns.task.core.application.usecase.task.dto.input.UpdateTaskInputDTO
 import com.jpmns.task.core.application.usecase.task.dto.output.TaskOutputDTO;
 import com.jpmns.task.core.application.usecase.task.exception.TaskAccessDeniedException;
 import com.jpmns.task.core.application.usecase.task.exception.TaskNotFoundException;
-import com.jpmns.task.core.application.usecase.task.interfaces.UpdateTaskUseCase;
 import com.jpmns.task.core.domain.common.valueobject.IdValueObject;
 import com.jpmns.task.core.domain.task.TaskEntity;
 
 @Service
-public class UpdateTaskUseCaseImpl implements UpdateTaskUseCase {
+public class UpdateTaskUseCase {
 
     private final TaskRepository taskRepository;
 
-    public UpdateTaskUseCaseImpl(TaskRepository taskRepository) {
+    public UpdateTaskUseCase(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    @Override
     public TaskOutputDTO execute(UpdateTaskInputDTO input) {
         var taskIdValue = IdValueObject.of(input.taskId()).getValueOrThrow();
 

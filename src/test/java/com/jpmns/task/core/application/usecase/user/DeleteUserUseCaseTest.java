@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.jpmns.task.core.application.port.persistence.repository.UserRepository;
 import com.jpmns.task.core.application.usecase.user.dto.input.DeleteUserInputDTO;
 import com.jpmns.task.core.application.usecase.user.exception.UserNotFoundException;
-import com.jpmns.task.core.application.usecase.user.implementation.DeleteUserUseCaseImpl;
 import com.jpmns.task.shared.fixture.UserFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +27,7 @@ class DeleteUserUseCaseTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private DeleteUserUseCaseImpl useCase;
+    private DeleteUserUseCase useCase;
 
     @Test
     @DisplayName("Should delete a user successfully")

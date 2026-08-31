@@ -1,4 +1,4 @@
-package com.jpmns.task.core.application.usecase.task.implementation;
+package com.jpmns.task.core.application.usecase.task;
 
 import java.util.UUID;
 
@@ -7,19 +7,17 @@ import org.springframework.stereotype.Service;
 import com.jpmns.task.core.application.port.persistence.repository.TaskRepository;
 import com.jpmns.task.core.application.usecase.task.dto.input.CreateTaskInputDTO;
 import com.jpmns.task.core.application.usecase.task.dto.output.TaskOutputDTO;
-import com.jpmns.task.core.application.usecase.task.interfaces.CreateTaskUseCase;
 import com.jpmns.task.core.domain.task.TaskEntity;
 
 @Service
-public class CreateTaskUseCaseImpl implements CreateTaskUseCase {
+public class CreateTaskUseCase {
 
     private final TaskRepository taskRepository;
 
-    public CreateTaskUseCaseImpl(TaskRepository taskRepository) {
+    public CreateTaskUseCase(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    @Override
     public TaskOutputDTO execute(CreateTaskInputDTO input) {
         var task = new TaskEntity(UUID.randomUUID().toString(), input.userId(), input.taskName(), false);
         var saved = taskRepository.save(task);
