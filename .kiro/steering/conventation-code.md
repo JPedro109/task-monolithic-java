@@ -17,7 +17,8 @@ As seguintes convenções devem ser adotadas:
 - Pacotes devem utilizar apenas letras minúsculas.
 - Interfaces devem representar comportamentos ou contratos.
 - Interfaces **não devem** utilizar o prefixo `I`.
-- Implementações concretas de interfaces devem utilizar o sufixo `Impl`.
+- Uma classe concreta só recebe o sufixo `Impl` quando implementa uma interface homônima que representa um contrato real com mais de um implementador possível — o caso das portas e seus adaptadores.
+- Casos de uso não possuem interface e, portanto, não utilizam o sufixo `Impl`. São nomeados pela operação que representam, terminando em `UseCase`.
 - Classes concretas devem possuir nomes que representem claramente sua responsabilidade.
 
 Evite abreviações desnecessárias e nomes genéricos que não expressem claramente a responsabilidade do componente.
@@ -25,15 +26,21 @@ Evite abreviações desnecessárias e nomes genéricos que não expressem claram
 ### ✔ Correto
 
 ```java
-public interface CreateUserUseCase {}
-
-public class CreateUserUseCaseImpl {}
-
-public class UserRepositoryImpl {}
+public class CreateSampleUseCase {}
 
 public interface PasswordEncoder {}
 
-public class JwtTokenProviderImpl {}
+public class BCryptPasswordEncoder implements PasswordEncoder {}
+
+public interface TaskRepository {}
+```
+
+### ❌ Incorreto
+
+```java
+public interface CreateSampleUseCase {}
+
+public class CreateSampleUseCaseImpl implements CreateSampleUseCase {}
 ```
 
 ### ❌ Incorreto
@@ -177,9 +184,9 @@ Métodos auxiliares devem permanecer próximos dos métodos que os utilizam, mas
 public class UserService {
     private static final int MAX_ATTEMPTS = 3;
 
-    private final UserRepository repository;
+    private final SampleRepository repository;
 
-    public UserService(UserRepository repository) {
+    public UserService(SampleRepository repository) {
         this.repository = repository;
     }
 
@@ -261,23 +268,20 @@ As seguintes regras devem ser respeitadas:
 - A injeção deve ocorrer exclusivamente pelo construtor.
 - Dependências obrigatórias devem ser imutáveis (`final`).
 - Instanciações diretas (`new`) devem ser evitadas para componentes gerenciados pela aplicação.
-- Dependências devem ser representadas por contratos sempre que possível.
+- Dependências de infraestrutura devem ser representadas por contratos (portas), nunca por implementações concretas.
 
 ### ✔ Correto
 
 ```java
 @Service
-public class CreateUserUseCaseImpl implements CreateUserUseCase {
+public class CreateSampleUseCase {
 
-    private final UserRepository repository;
-    private final PasswordEncoder passwordEncoder;
+    private final SampleRepository repository;
 
-    public CreateUserUseCaseImpl(
-            UserRepository repository,
-            PasswordEncoder passwordEncoder
+    public CreateSampleUseCase(
+            SampleRepository repository
     ) {
         this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
     }
 }
 ```
@@ -286,9 +290,9 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
 
 ```java
 @Service
-public class CreateUserUseCaseImpl {
+public class CreateSampleUseCase {
     @Autowired
-    private UserRepository repository;
+    private SampleRepository repository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 }
@@ -297,8 +301,9 @@ public class CreateUserUseCaseImpl {
 ### ❌ Incorreto
 
 ```java
-public class CreateUserUseCaseImpl {
-    private final UserRepository repository = new UserRepositoryImpl();
+@Service
+public class CreateSampleUseCase {
+    private final SampleRepository repository = new SampleserRepository();
 }
 ```
 

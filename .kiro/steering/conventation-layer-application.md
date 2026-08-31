@@ -27,19 +27,18 @@ application/
 │   └── security/
 └── usecase/
     └── sample/
-        ├── interfaces/
-        ├── implementation/
         ├── dto/
         │   ├── input/
         │   └── output/
-        └── exception/
+        ├── exception/
+        └── CreateSampleUseCase.java
 ```
 
 As seguintes regras devem ser respeitadas:
 
 - Cada contexto deve possuir seu próprio pacote.
-- Cada caso de uso deve possuir sua própria interface.
-- Implementações devem permanecer em `implementation`.
+- Cada caso de uso é uma classe concreta localizada diretamente no pacote do contexto.
+- Casos de uso não possuem interface nem sufixo `Impl`, pois representam uma operação única sem ponto de variação. Contratos (interfaces) são reservados às portas.
 - DTOs devem permanecer separados entre entrada e saída.
 - Portas devem permanecer organizadas por responsabilidade.
 
@@ -53,22 +52,34 @@ Cada caso de uso deve representar apenas uma responsabilidade.
 
 As seguintes regras devem ser respeitadas:
 
-- Todo caso de uso deve possuir uma interface.
-- Toda implementação deve implementar sua respectiva interface.
-- Implementações devem utilizar o sufixo `Impl`.
+- Cada caso de uso é uma classe concreta, sem interface e sem sufixo `Impl`.
+- O nome da classe descreve a operação e termina em `UseCase` (ex.: `CreateSampleUseCase`).
+- Como não há interface, o método `execute` não utiliza `@Override`.
 - Cada caso de uso deve executar apenas um fluxo da aplicação.
 - Casos de uso não devem conter regras de infraestrutura.
 - Casos de uso não devem depender da camada Presentation.
 
+> Casos de uso possuem uma única implementação e nenhum ponto de variação, por isso a interface seria pura cerimônia. A inversão de dependência é aplicada apenas às portas (repositories, security, gateways), que permanecem interfaces.
+
 ## ✔ Correto
+
+```java
+@Service
+public class CreateSampleUseCase {
+
+    public CreateSampleOutput execute(CreateSampleInput input) {
+        ...
+    }
+}
+```
+
+## ❌ Incorreto
 
 ```java
 public interface CreateSampleUseCase {
     CreateSampleOutput execute(CreateSampleInput input);
 }
-```
 
-```java
 @Service
 public class CreateSampleUseCaseImpl implements CreateSampleUseCase {
     ...
@@ -225,7 +236,6 @@ As seguintes regras devem ser respeitadas:
 ## ✔ Correto
 
 ```java
-@Override
 public CreateSampleOutput execute(
         CreateSampleInput input
 ) {
@@ -299,8 +309,8 @@ Não é permitido depender de:
 Toda implementação da camada Application deve respeitar os seguintes princípios:
 
 - Cada caso de uso representa uma única operação da aplicação.
-- Todo caso de uso deve possuir interface e implementação.
-- Implementações devem utilizar o sufixo `Impl`.
+- Cada caso de uso é uma classe concreta, sem interface e sem sufixo `Impl`.
+- Contratos (interfaces) são reservados às portas, nunca aos casos de uso.
 - DTOs devem utilizar `record`.
 - DTOs não possuem regras de negócio.
 - Toda comunicação externa deve ocorrer através de portas.

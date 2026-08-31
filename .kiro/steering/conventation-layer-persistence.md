@@ -280,7 +280,7 @@ public Optional<SampleEntity> findByName(
 
 ```java
 @Service
-public class CreateSampleUseCaseImpl implements CreateSampleUseCase {
+public class CreateSampleUseCase {
 
     @PersistenceContext
     private EntityManager entityManager;

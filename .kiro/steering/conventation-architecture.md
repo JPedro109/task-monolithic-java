@@ -14,8 +14,9 @@ Toda implementação deve respeitar os seguintes princípios:
 * Casos de uso representam operações completas da aplicação e coordenam a execução das regras de negócio.
 * Infraestrutura implementa apenas detalhes técnicos necessários para suportar a aplicação.
 * A camada de apresentação apenas recebe requisições, delega sua execução e devolve respostas.
-* Toda comunicação entre camadas ocorre através de contratos bem definidos.
-* Implementações concretas nunca devem ser utilizadas quando um contrato puder representar a dependência.
+* A comunicação com a infraestrutura ocorre através de contratos (portas) bem definidos.
+* Dependências de infraestrutura nunca devem ser representadas por implementações concretas quando uma porta puder representar a dependência.
+* Contratos existem para inverter dependências entre camadas (portas e adaptadores), não para componentes de implementação única como os casos de uso.
 
 ---
 
@@ -173,12 +174,12 @@ Não é responsável por:
 Todas as implementações devem seguir as seguintes regras:
 
 * Cada classe deve possuir uma única responsabilidade.
-* Cada componente deve depender de abstrações sempre que possível.
+* Dependências que cruzam a fronteira com a infraestrutura devem depender de abstrações (portas).
 * Nenhuma camada pode acessar diretamente detalhes internos de outra camada.
 * Toda integração com tecnologias externas deve ser encapsulada em adaptadores.
 * Toda conversão entre modelos deve ser explícita.
 * Nenhuma regra de negócio deve depender de detalhes técnicos.
-* Nenhuma implementação concreta deve ser utilizada quando existir um contrato equivalente.
+* Nenhuma implementação de infraestrutura deve ser utilizada diretamente quando existir uma porta equivalente. Componentes de implementação única, como casos de uso, são utilizados diretamente por não possuírem ponto de variação.
 * Objetos pertencentes a uma camada não devem ser reutilizados por outra camada sem uma conversão explícita.
 * Toda dependência deve possuir a menor abrangência possível.
 * O acoplamento entre módulos deve ser minimizado e a coesão interna maximizada.

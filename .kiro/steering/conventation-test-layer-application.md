@@ -24,7 +24,7 @@ src/test/java/
 └── application/
     └── usecase/
         └── sample/
-            ├── CreateSampleUseCaseImplTest.java
+            ├── CreateSampleUseCaseTest.java
 ```
 
 ---
@@ -36,7 +36,7 @@ As seguintes regras devem ser respeitadas:
 - Cada caso de uso deve possuir sua própria classe de teste.
 - Dependências devem ser simuladas utilizando Mockito.
 - O contexto do Spring não deve ser iniciado.
-- Apenas a implementação do caso de uso deve ser instanciada.
+- Apenas a classe do caso de uso deve ser instanciada.
 - Todos os fluxos de sucesso e falha devem ser testados.
 - O comportamento das portas deve ser validado através de verificações (`verify`).
 - Fixtures devem ser utilizadas sempre que possível.
@@ -80,13 +80,13 @@ Todo caso de uso deve possuir, no mínimo, testes para:
 
 ```java
 @ExtendWith(MockitoExtension.class)
-class CreateSampleUseCaseImplTest {
+class CreateSampleUseCaseTest {
 
     @Mock
     private SampleRepository repository;
 
     @InjectMocks
-    private CreateSampleUseCaseImpl useCase;
+    private CreateSampleUseCase useCase;
 
     @Test
     @DisplayName("Should create sample")
