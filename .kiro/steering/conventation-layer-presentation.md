@@ -70,7 +70,7 @@ As seguintes regras devem ser respeitadas:
 @RequestMapping("/samples")
 public class SampleController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SampleController.class);
 
     private final CreateSampleUseCase createSampleUseCase;
 
@@ -316,9 +316,9 @@ As seguintes regras devem ser respeitadas:
 ## ✔ Correto
 
 ```java
-public class AuthenticatedUserResolver {
+public class AuthenticatedSampleResolver {
 
-    public AuthenticatedUser resolve() {
+    public AuthenticatedSample resolve() {
         ...
     }
 }
@@ -330,7 +330,7 @@ public class AuthenticatedUserResolver {
 
 ## `*ControllerDoc` — documentação de endpoints
 
-- Cada controller possui uma interface `*ControllerDoc` correspondente em `documentation/` (ex: `TaskControllerDoc`, `AuthControllerDoc`).
+- Cada controller possui uma interface `*ControllerDoc` correspondente em `documentation/` (ex: `SampleControllerDoc`).
 - A interface é anotada com `@Tag(name = "...", description = "...")` e `@RequestMapping` com o path base do controller.
 - Endpoints que exigem autenticação recebem `@SecurityRequirement(name = "bearerAuth")` na interface (ou no método, quando apenas alguns endpoints do controller são protegidos).
 - Cada método da interface declara exatamente uma anotação `@Operation` e uma `@ApiResponses`.
@@ -353,42 +353,42 @@ public class AuthenticatedUserResolver {
 Para respostas sem corpo (`204 No Content`), omita o `content` na `@ApiResponse`.
 
 ```java
-@Tag(name = "Tasks", description = "Gerenciamento de tarefas — criação, listagem, atualização, exclusão e conclusão")
-@RequestMapping("/api/v1/tasks")
+@Tag(name = "Samples", description = "Gerenciamento de samples — criação, listagem, atualização e exclusão")
+@RequestMapping("/api/v1/samples")
 @SecurityRequirement(name = "bearerAuth")
-public interface TaskControllerDoc {
+public interface SampleControllerDoc {
 
     @Operation(
-            summary = "Criar nova tarefa",
+            summary = "Criar novo sample",
             description = """
-                    <p>Cria uma nova tarefa associada ao usuário autenticado.</p>
-                    <p>A tarefa é criada com o status <code>finished: false</code> por padrão.</p>
+                    <p>Cria um novo sample associado ao contexto autenticado.</p>
+                    <p>O sample é criado com o status <code>finished: false</code> por padrão.</p>
                     <p>Requer autenticação via <code>Authorization: Bearer &lt;accessToken&gt;</code>.</p>
                     """,
             requestBody = @RequestBody(
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = CreateTaskRequest.class),
+                            schema = @Schema(implementation = CreateSampleRequest.class),
                             examples = {
-                                    @ExampleObject(name = "Tarefa válida", value = """
-                                            {"taskName": "Estudar Spring Boot"}
+                                    @ExampleObject(name = "Sample válido", value = """
+                                            {"name": "Sample Name"}
                                             """),
                                     @ExampleObject(name = "Nome em branco (inválido)", value = """
-                                            {"taskName": ""}
+                                            {"name": ""}
                                             """)
                             }
                     )
             )
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Tarefa criada com sucesso",
+            @ApiResponse(responseCode = "201", description = "Sample criado com sucesso",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = TaskResponse.class),
-                            examples = @ExampleObject(name = "Tarefa criada", value = """
+                            schema = @Schema(implementation = SampleResponse.class),
+                            examples = @ExampleObject(name = "Sample criado", value = """
                                     {
                                       "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-                                      "taskName": "Estudar Spring Boot",
+                                      "name": "Sample Name",
                                       "finished": false
                                     }
                                     """))),
@@ -403,7 +403,7 @@ public interface TaskControllerDoc {
                                     {"status": 500, "detail": "Internal server error"}
                                     """)))
     })
-    ResponseEntity<TaskResponse> createTask(@Valid @RequestBody CreateTaskRequest request);
+    ResponseEntity<SampleResponse> createSample(@Valid @RequestBody CreateSampleRequest request);
 }
 ```
 
@@ -416,29 +416,29 @@ public interface TaskControllerDoc {
 - Campos sensíveis (senha, token) devem ter `example` com valor fictício (nunca omitir o exemplo).
 
 ```java
-@Schema(name = "CreateTaskRequest", description = "Dados para criação de uma nova tarefa")
-public interface CreateTaskRequestDoc {
+@Schema(name = "CreateSampleRequest", description = "Dados para criação de um novo sample")
+public interface CreateSampleRequestDoc {
 
     @Schema(
-            description = "Nome da tarefa. Não pode ser vazio e deve ter no máximo 255 caracteres.",
-            example = "Estudar Spring Boot",
+            description = "Nome do sample. Não pode ser vazio e deve ter no máximo 255 caracteres.",
+            example = "Sample Name",
             maxLength = 255
     )
-    String taskName();
+    String name();
 }
 
-public record CreateTaskRequest(
+public record CreateSampleRequest(
         @NotBlank
         @Size(max = 255)
-        String taskName()
-) implements CreateTaskRequestDoc { }
+        String name()
+) implements CreateSampleRequestDoc { }
 ```
 
 ## Regras gerais de documentação
 
 - Nunca adicione anotações do SpringDoc (`@Operation`, `@ApiResponse`, `@Schema`, etc.) diretamente nos controllers ou nos records de request/response. Toda documentação pertence às interfaces `*Doc`.
 - Exemplos de corpo de resposta de erro devem seguir o formato Problem Details (RFC 7807): campos `type`, `title`, `status`, `detail`.
-- Os nomes dos `@ExampleObject` devem ser descritivos e em português, indicando o cenário representado (ex: `"Credenciais válidas"`, `"Username muito curto (inválido)"`).
+- Os nomes dos `@ExampleObject` devem ser descritivos e em português, indicando o cenário representado (ex: `"Sample válido"`, `"Nome muito curto (inválido)"`).
 
 ## ✔ Correto
 

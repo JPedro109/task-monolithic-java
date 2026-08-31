@@ -32,7 +32,7 @@ public interface PasswordEncoder {}
 
 public class BCryptPasswordEncoder implements PasswordEncoder {}
 
-public interface TaskRepository {}
+public interface SampleRepository {}
 ```
 
 ### ❌ Incorreto
@@ -46,7 +46,7 @@ public class CreateSampleUseCaseImpl implements CreateSampleUseCase {}
 ### ❌ Incorreto
 
 ```java
-public class UserManager {}
+public class SampleManager {}
 
 public class Helper {}
 
@@ -66,13 +66,13 @@ Não é permitido utilizar valores literais ("magic numbers" ou "magic strings")
 ### ✔ Correto
 
 ```java
-private static final int MAX_USERNAME_LENGTH = 50;
+private static final int MAX_SAMPLE_NAME_LENGTH = 50;
 ```
 
 ### ❌ Incorreto
 
 ```java
-if (username.length() > 50) {
+if (sampleName.length() > 50) {
     ...
 }
 ```
@@ -121,42 +121,42 @@ Cada bloco deve representar uma fase claramente identificável da execução, co
 ### ✔ Correto
 
 ```java
-public User create(CreateUserInput input) {
+public Sample create(CreateSampleInput input) {
     validate(input);
 
-    User user = mapper.toEntity(input);
+    Sample sample = mapper.toEntity(input);
 
-    repository.save(user);
+    repository.save(sample);
 
-    eventPublisher.publish(new UserCreatedEvent(user));
+    eventPublisher.publish(new SampleCreatedEvent(sample));
 
-    return mapper.toOutput(user);
+    return mapper.toOutput(sample);
 }
 ```
 
 ### ❌ Incorreto
 
 ```java
-public User create(CreateUserInput input) {
+public Sample create(CreateSampleInput input) {
     validate(input);
-    User user = mapper.toEntity(input);
-    repository.save(user);
-    eventPublisher.publish(new UserCreatedEvent(user));
-    return mapper.toOutput(user);
+    Sample sample = mapper.toEntity(input);
+    repository.save(sample);
+    eventPublisher.publish(new SampleCreatedEvent(sample));
+    return mapper.toOutput(sample);
 }
 ```
 
 ### ✔ Outro exemplo
 
 ```java
-public void authenticate(LoginInput input) {
-    User user = findUser(input.email());
+public Token process(ProcessSampleInput input) {
+    Sample sample = findSample(input.name());
 
-    validatePassword(user, input.password());
+    validateSample(sample, input.value());
 
-    Token token = tokenProvider.generate(user);
+    Token token = tokenProvider.generate(sample);
 
-    audit(user);
+    audit(sample);
 
     return token;
 }
@@ -181,16 +181,16 @@ Métodos auxiliares devem permanecer próximos dos métodos que os utilizam, mas
 ### ✔ Correto
 
 ```java
-public class UserService {
+public class SampleService {
     private static final int MAX_ATTEMPTS = 3;
 
     private final SampleRepository repository;
 
-    public UserService(SampleRepository repository) {
+    public SampleService(SampleRepository repository) {
         this.repository = repository;
     }
 
-    public User findById(UUID id) {
+    public Sample findById(UUID id) {
         validate(id);
 
         return repository.findById(id);
@@ -218,25 +218,25 @@ Sempre que possível:
 ### ✔ Correto
 
 ```java
-public User execute(CreateUserInput input) {
+public Sample execute(CreateSampleInput input) {
     validate(input);
 
-    User user = createUser(input);
+    Sample sample = createSample(input);
 
-    save(user);
+    save(sample);
 
-    return user;
+    return sample;
 }
 
-private void validate(CreateUserInput input) {
+private void validate(CreateSampleInput input) {
     ...
 }
 
-private User createUser(CreateUserInput input) {
+private Sample createSample(CreateSampleInput input) {
     ...
 }
 
-private void save(User user) {
+private void save(Sample sample) {
     ...
 }
 ```
@@ -244,7 +244,7 @@ private void save(User user) {
 ### ❌ Incorreto
 
 ```java
-public User execute(CreateUserInput input) {
+public Sample execute(CreateSampleInput input) {
 
     // 150 linhas contendo:
     // validação
@@ -335,11 +335,11 @@ As seguintes práticas devem ser adotadas:
 ### ✔ Correto
 
 ```java
-log.info("Creating user - request: {}", request);
+log.info("Creating sample - request: {}", request);
 ```
 
 ```java
-log.info("Creating user - response: {}", response);
+log.info("Creating sample - response: {}", response);
 ```
 
 ```java
@@ -350,27 +350,27 @@ log.error("Resource not found: {}", ex.getMessage(), ex);
 
 ```java
 log.info(
-    "User {} authenticated using password {}",
-    username,
-    password
+    "Sample {} processed using secret {}",
+    sampleName,
+    secret
 );
 ```
 
 ```java
 log.info(
-    "User {} authenticated using password {}",
-    username,
-    password
+    "Sample {} processed using secret {}",
+    sampleName,
+    secret
 );
 ```
 
 ```java
-log.info("User created: " + username);
+log.info("Sample created: " + sampleName);
 ```
 
 ```java
 log.info(
-    "RequestId={} TraceId={} User authenticated.",
+    "RequestId={} TraceId={} Sample processed.",
     requestId,
     traceId
 );
@@ -385,7 +385,7 @@ log.info(
 @RequestMapping("/samples")
 public class SampleController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SampleController.class);
 }
 ```
 

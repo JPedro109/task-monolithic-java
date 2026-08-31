@@ -47,7 +47,7 @@ As seguintes regras devem ser respeitadas:
 - Os testes devem utilizar AssertJ quando houver validações fora do MockMvc.
 - Os testes devem seguir o padrão AAA (Arrange → Act → Assert).
 - Use `@Import` para incluir beans quando necessário.
-- Uma `@Nested` class por endpoint, com `@DisplayName` indicando o método HTTP e o path (ex: `"POST /api/v1/auth/login"`).
+- Uma `@Nested` class por endpoint, com `@DisplayName` indicando o método HTTP e o path (ex: `"POST /api/v1/samples"`).
 - Cada classe nested tem seu próprio método privado `perform(...)` que encapsula a chamada MockMvc para aquele endpoint.
 
 ---
@@ -101,8 +101,8 @@ class SampleControllerTest {
     private CreateSampleUseCase createSampleUseCase;
 
         @Nested
-        @DisplayName("POST /api/v1/auth/login")
-        class Login {
+        @DisplayName("POST /api/v1/samples")
+        class CreateSample {
 
             @Test
             @DisplayName("Should return 201 when request is valid")
@@ -133,12 +133,12 @@ class SampleControllerTest {
                 verify(createSampleUseCase, never()).execute(any());
             }
 
-            private ResultActions perform(String sample, String value) throws Exception {
+            private ResultActions perform(String name, String value) throws Exception {
                 var requestBody = """
-                        {"sample": "%s", "value": "%s"}
-                        """.formatted(username, password);
+                        {"name": "%s", "value": "%s"}
+                        """.formatted(name, value);
 
-                return mockMvc.perform(post("/api/v1/sample")
+                return mockMvc.perform(post("/api/v1/samples")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody));
             }
@@ -259,10 +259,8 @@ src/test/java/
     │   └── sql/
     │       ├── SqlCreateSeed.java
     │       └── SqlUpdateSeed.java
-    ├── sample/
-    │   └── SampleIntegrationTest.java
-    └── authentication/
-        └── AuthenticationIntegrationTest.java
+    └── sample/
+        └── SampleIntegrationTest.java
 ```
 
 ---

@@ -32,7 +32,7 @@ src/test/java/
 Todos os testes de integração dos controllers, devem herdar da classe abstrata em src/test/java/integration/common/container, a classe abstrata deve ser essa:
 
 ```java
-@SpringBootTest(classes = TaskApplication.class)
+@SpringBootTest(classes = SampleApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("integration-test")
 @Import(PostgresContainerConfig.class)
@@ -54,7 +54,7 @@ public class PostgresContainerConfig {
     @ServiceConnection
     public PostgreSQLContainer<?> postgresContainer() {
         return new PostgreSQLContainer<>(DockerImageName.parse("postgres:15-alpine"))
-                .withDatabaseName("task_test")
+                .withDatabaseName("sample_test")
                 .withUsername("test")
                 .withPassword("test");
     }
@@ -69,8 +69,7 @@ Quaisquer configurações de seeds para testes devem ficar em src/test/java/inte
 @SqlGroup({
         @Sql(
                 scripts = {
-                        "classpath:/sql/insert-user.sql",
-                        "classpath:/sql/insert-task.sql"
+                        "classpath:/sql/insert-sample.sql"
                 },
                 executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
         ),
@@ -87,8 +86,8 @@ public @interface SqlCreateSeed { }
 
 - Use ou crie fixtures existentes fixtures para construir dados de teste. Nunca instancie entidades de domínio inline dentro dos testes. Nunca use valores aleatórios (`UUID.randomUUID()`, `Math.random()`, etc.) — sempre fixture.
 - Todo método de teste deve ter `@DisplayName` com uma frase descritiva em inglês no formato `"Should [resultado esperado] when [condição]"`.
-  - Exemplos: `"Should return 200 with tokens when credentials are valid"`, `"Should throw when task is not found"`, `"Should return 403 when user does not own the task"`.
-- O nome do método é o `@DisplayName` em camelCase: `shouldReturn200WhenCredentialsAreValid`, `shouldThrowWhenTaskNotFound`.
+  - Exemplos: `"Should create sample when data is valid"`, `"Should throw when sample is not found"`, `"Should return 400 when name is blank"`.
+- O nome do método é o `@DisplayName` em camelCase: `shouldCreateSampleWhenDataIsValid`, `shouldThrowWhenSampleNotFound`.
 - Use `assertThat` do AssertJ para asserções e `assertThatThrownBy` para verificar exceções.
 - Verifique interações com `verify(mock).method(...)` e `verify(mock, never()).method(...)`.
 - Testes devem ser ordenados: sucesso (happy path) primeiro, corner cases depois, exceções/erros por último.
@@ -97,29 +96,28 @@ public @interface SqlCreateSeed { }
   - Dentro do `Arrange`, separe a criação de variáveis dos stubs `when(...)` com uma linha em branco:
 
 ```java
-var user = UserFixture.aUser();
-var username = user.getUsername();
-var password = user.getPassword();
-var input = new CreateUserInputDTO(username.asString(), password.asString());
-var savedUser = UserFixture.aUser();
+var sample = SampleEntityFixture.aSample();
+var name = sample.getName();
+var value = sample.getValue();
+var input = new CreateSampleInput(name.asString(), value.asString());
+var savedSample = SampleEntityFixture.aSample();
 
-when(userRepository.existsByUsername(username)).thenReturn(false);
-when(passwordEncoder.encode(password.asString())).thenReturn(password.asString());
-when(userRepository.save(any())).thenReturn(savedUser);
+when(sampleRepository.existsByName(name)).thenReturn(false);
+when(sampleRepository.save(any())).thenReturn(savedSample);
 
 var output = useCase.execute(input);
 
-assertThat(output.username()).isEqualTo(username.asString());
+assertThat(output.name()).isEqualTo(name.asString());
 assertThat(output.id()).isNotNull();
-verify(userRepository).save(any());
+verify(sampleRepository).save(any());
 ```
 
 - Sempre declare o fixture primeiro e depois extraia cada campo que for utilizar em variáveis separadas:
 
 ```java
-var user = UserFixture.aUser();
-var username = user.getUsername();
-var password = user.getPassword();
+var sample = SampleEntityFixture.aSample();
+var name = sample.getName();
+var value = sample.getValue();
 ```
 
 - Cubra o máximo de cenários possível. Sempre siga a estrutura de layout definida para cada tipo de teste.

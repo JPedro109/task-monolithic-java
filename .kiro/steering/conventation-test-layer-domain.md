@@ -71,7 +71,7 @@ class SampleNameValueObjectTest {
     }
 
     @ParameterizedTest
-    @DisplayName("Should fail for null, empty, too short, too long or invalid character usernames")
+    @DisplayName("Should fail for null, empty, too short, too long or invalid character sample names")
     @NullAndEmptySource
     void shouldFailForInvalidSampleName() {
         var invalidSampleName = "";
